@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0d0d0d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="موسیقی جاودان">
+<link rel="manifest" href="manifest.json">
+<title>موسیقی جاودان</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #181818;
+    --surface2: #222222;
+    --border: #2a2a2a;
+    --text: #f0f0f0;
+    --muted: #777;
+    --accent: #c9a0ff;
+    --accent-d: #3B1F6B;
+    --accent-h: #FFB3D1;
+    --accent-hd: #6B1A3A;
+    --radius: 14px;
+    --pad: 16px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- NAV ---- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,13,13,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px var(--pad);
+    height: 56px;
+  }
+  .nav-title { font-size: 16px; font-weight: 500; }
+  .nav-back { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; padding: 4px 8px; display: none; }
+  .nav-back.visible { display: block; }
+
+  /* ---- PAGES ---- */
+  .page { display: none; padding-top: 68px; padding-bottom: 24px; min-height: 100vh; }
+  .page.active { display: block; }
+
+  /* ---- HOME ---- */
+  .home-header {
+    text-align: center; padding: 32px var(--pad) 24px;
+  }
+  .home-header h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .home-header p { font-size: 14px; color: var(--muted); }
+
+  .artist-cards {
+    display: flex; flex-direction: column; gap: 12px;
+    padding: 0 var(--pad);
+  }
+  .artist-card {
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    cursor: pointer;
+    transition: transform 0.15s, opacity 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .artist-card:active { transform: scale(0.98); opacity: 0.9; }
+  .artist-card-d { background: linear-gradient(135deg, #1a0a2e 0%, #2d1060 100%); border: 1px solid #3B1F6B; }
+  .artist-card-h { background: linear-gradient(135deg, #1a0a18 0%, #501030 100%); border: 1px solid #6B1A3A; }
+  .card-label { font-size: 11px; font-weight: 500; letter-spacing: 2px; opacity: 0.7; margin-bottom: 6px; text-transform: uppercase; }
+  .card-name { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
+  .card-title { font-size: 13px; opacity: 0.7; margin-bottom: 16px; }
+  .card-stats { display: flex; gap: 20px; }
+  .card-stat { font-size: 12px; opacity: 0.8; }
+  .card-stat span { font-weight: 600; font-size: 16px; display: block; margin-bottom: 2px; }
+  .card-deco {
+    position: absolute; left: -20px; top: -20px;
+    width: 120px; height: 120px; border-radius: 50%;
+    opacity: 0.06;
+  }
+  .card-deco-d { background: #c9a0ff; }
+  .card-deco-h { background: #ffb3d1; }
+
+  /* ---- ARTIST PAGE ---- */
+  .artist-hero {
+    padding: 20px var(--pad) 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .artist-hero-name { font-size: 24px; font-weight: 600; margin-bottom: 2px; }
+  .artist-hero-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .artist-bio { font-size: 13px; line-height: 1.8; color: #aaa; margin-bottom: 16px; }
+  .artist-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    border: 1px solid; font-weight: 500;
+  }
+
+  .section-tabs {
+    display: flex; border-bottom: 1px solid var(--border);
+    position: sticky; top: 56px; background: var(--bg); z-index: 10;
+  }
+  .sec-tab {
+    flex: 1; padding: 14px; text-align: center;
+    font-size: 14px; font-weight: 500; color: var(--muted);
+    cursor: pointer; border: none; background: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .sec-tab.active { color: var(--text); }
+
+  .section-panel { display: none; }
+  .section-panel.active { display: block; }
+
+  .list-section { padding: 8px 0; }
+  .list-header {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+    color: var(--muted); text-transform: uppercase;
+    padding: 16px var(--pad) 8px;
+  }
+
+  .item-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px var(--pad);
+    cursor: pointer; transition: background 0.1s;
+    border-bottom: 1px solid var(--border);
+  }
+  .item-row:active { background: var(--surface); }
+  .item-num {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+  .item-info { flex: 1; min-width: 0; }
+  .item-title { font-size: 15px; font-weight: 500; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-arrow { color: var(--muted); font-size: 16px; flex-shrink: 0; }
+
+  .album-badge {
+    display: inline-block; font-size: 10px; padding: 2px 7px;
+    border-radius: 10px; margin-right: 6px; vertical-align: middle;
+    font-weight: 500;
+  }
+
+  /* ---- SONG DETAIL PAGE ---- */
+  .song-hero {
+    padding: 24px var(--pad) 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .song-hero-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .song-hero-artist { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
+  .song-nav-tabs {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .song-nav-tabs::-webkit-scrollbar { display: none; }
+  .song-tab {
+    flex-shrink: 0; padding: 8px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 1px solid var(--border); background: none;
+    color: var(--muted); transition: all 0.15s;
+  }
+  .song-tab.active { color: var(--bg); }
+
+  .song-panel { display: none; padding: var(--pad); }
+  .song-panel.active { display: block; }
+
+  .info-grid { display: flex; flex-direction: column; gap: 1px; }
+  .info-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 12px; color: var(--muted); min-width: 100px; flex-shrink: 0; padding-top: 1px; }
+  .info-val { font-size: 14px; color: var(--text); flex: 1; line-height: 1.6; }
+  .info-val.empty { color: var(--muted); font-style: italic; font-size: 13px; }
+
+  .story-text { font-size: 15px; line-height: 2; color: #ccc; }
+  .no-content { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
+  .no-content-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .lyrics-text {
+    font-size: 15px; line-height: 2.2; color: #ccc;
+    white-space: pre-wrap; text-align: center;
+    font-weight: 300;
+  }
+
+  .sheet-music { text-align: center; padding: 24px 0; color: var(--muted); font-size: 14px; }
+
+  /* ---- ALBUM DETAIL ---- */
+  .album-hero { padding: 20px var(--pad); border-bottom: 1px solid var(--border); }
+  .album-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .album-year { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .album-info-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+  .album-info-label { color: var(--muted); min-width: 80px; }
+  .album-info-val { color: var(--text); }
+  .album-story { font-size: 13px; line-height: 1.8; color: #aaa; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+  /* ---- UTILS ---- */
+  .fade-in { animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .empty-badge {
+    display: inline-block; font-size: 10px; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; margin-right: 4px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <button class="nav-back" id="navBack" onclick="goBack()">&#8592;</button>
+  <div class="nav-title" id="navTitle">موسیقی جاودان</div>
+  <div style="width:40px"></div>
+</nav>
+
+<!-- HOME -->
+<div class="page active fade-in" id="page-home">
+  <div class="home-header">
+    <h1>موسیقی جاودان</h1>
+    <p>آرشیو آثار داریوش و بانو هایده</p>
+  </div>
+  <div class="artist-cards">
+    <div class="artist-card artist-card-d" onclick="openArtist('dariush')">
+      <div class="card-deco card-deco-d"></div>
+      <div class="card-label">خواننده · پاپ و راک</div>
+      <div class="card-name" style="color:#c9a0ff">داریوش</div>
+      <div class="card-title">سلطان صدا — داریوش اقبالی</div>
+      <div class="card-stats">
+        <div class="card-stat"><span id="stat-d-alb">-</span>آلبوم</div>
+        <div class="card-stat"><span id="stat-d-s">-</span>تک‌آهنگ</div>
+      </div>
+    </div>
+    <div class="artist-card artist-card-h" onclick="openArtist('hayedeh')">
+      <div class="card-deco card-deco-h"></div>
+      <div class="card-label">خواننده · پاپ و سنتی</div>
+      <div class="card-name" style="color:#ffb3d1">هایده</div>
+      <div class="card-title">دیوای ایران — معصومه دده‌بالا</div>
+      <div class="card-stats">
+        <div class="card-stat"><span id="stat-h-alb">-</span>آلبوم</div>
+        <div class="card-stat"><span id="stat-h-s">-</span>تک‌آهنگ</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding: 24px var(--pad) 0; text-align: center;">
+    <p style="font-size: 12px; color: var(--muted); line-height: 1.8;">
+      فیلدهای خالی به معنی نبود اطلاعات تأییدشده است<br>
+      نه اطلاعات اشتباه
+    </p>
+  </div>
+</div>
+
+<!-- ARTIST -->
+<div class="page" id="page-artist">
+  <div class="artist-hero" id="artist-hero"></div>
+  <div class="section-tabs">
+    <button class="sec-tab active" onclick="switchSection('albums')" id="tab-albums">آلبوم‌ها</button>
+    <button class="sec-tab" onclick="switchSection('singles')" id="tab-singles">تک‌آهنگ‌ها</button>
+  </div>
+  <div class="section-panel active" id="panel-albums"></div>
+  <div class="section-panel" id="panel-singles"></div>
+</div>
+
+<!-- ALBUM DETAIL -->
+<div class="page" id="page-album">
+  <div class="album-hero" id="album-hero"></div>
+  <div class="list-header">ترانه‌ها</div>
+  <div id="album-songs"></div>
+</div>
+
+<!-- SONG DETAIL -->
+<div class="page" id="page-song">
+  <div class="song-hero" id="song-hero"></div>
+  <div class="song-panel active" id="sp-info"></div>
+  <div class="song-panel" id="sp-story"></div>
+  <div class="song-panel" id="sp-lyrics"></div>
+  <div class="song-panel" id="sp-sheet"></div>
+</div>
+
+<script>
+const DATA = {
+  dariush: {
+    id: "dariush", name: "داریوش", fullName: "داریوش اقبالی", title: "سلطان صدا",
+    born: "۱۵ بهمن ۱۳۲۹", birthPlace: "تهران", voiceType: "باس",
+    color: "#3B1F6B", colorLight: "#c9a0ff", colorDark: "#1a0a2e",
+    bio: "خواننده، آهنگساز و بازیگر ایرانی-آمریکایی. اولین اجرا در ۹ سالگی. ورود رسمی به موسیقی در ۱۹ سالگی با ترانه «به من نگو دوست دارم». دوره همکاری با بابک بیات و ایرج جنتی عطایی به «دوران طلایی» موسیقی پاپ ایران معروف است. عضو سازمان عفو بین‌الملل.",
+    albums: [
+      { id:"alb-d-01", title:"به من نگو دوست دارم", year:"۱۳۴۹", composer:"مصطفی جاویدان", poet:"", arranger:"", director:"", story:"اولین آلبوم حرفه‌ای داریوش در ۱۹ سالگی که او را یک‌شبه مشهور کرد.", songs:[
+        {id:"s-d-001",title:"به من نگو دوست دارم",year:"۱۳۴۹",poet:"",composer:"مصطفی جاویدان",arranger:"",director:"",story:"اولین ترانه رسمی داریوش در ۱۹ سالگی که او را یک‌شبه مشهور کرد.",lyrics:""}
+      ]},
+      { id:"alb-d-02", title:"ترانه جنگل", year:"۱۳۵۲", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"", story:"با الهام از رویداد سیاهکل ساخته شد. باعث دستگیری داریوش و ایرج جنتی عطایی در ۱۳۵۳ شد.", songs:[
+        {id:"s-d-002",title:"ترانه جنگل",year:"۱۳۵۲",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"با الهام از رویداد سیاهکل ساخته شد. همراه با «بن‌بست» و «خونه» باعث دستگیری داریوش و جنتی عطایی در ۱۳۵۳ شد.",lyrics:""},
+        {id:"s-d-003",title:"بن‌بست",year:"۱۳۵۲",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"",lyrics:""},
+        {id:"s-d-004",title:"خونه",year:"۱۳۵۲",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-d-03", title:"فریاد زیر آب", year:"دهه ۵۰", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"سیروس الوند", story:"ترانه اصلی فیلم «فریاد زیر آب» — تنها فیلمی که داریوش در آن نقش اصلی دارد.", songs:[
+        {id:"s-d-005",title:"فریاد زیر آب",year:"دهه ۵۰",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"سیروس الوند",story:"برای فیلم «فریاد زیر آب» ساخته شد. داستان درباره ولگردی است که عاشق دختر پولداری می‌شود.",lyrics:""}
+      ]},
+      { id:"alb-d-04", title:"بوی گندم", year:"دهه ۵۰", composer:"واروژان", poet:"شهیار قنبری", arranger:"واروژان", director:"", story:"این ترانه باعث شد داریوش، شهیار قنبری و واروژان هر سه به زندان بیفتند.", songs:[
+        {id:"s-d-006",title:"بوی گندم",year:"دهه ۵۰",poet:"شهیار قنبری",composer:"واروژان",arranger:"واروژان",director:"",story:"یکی از سیاسی‌ترین ترانه‌های پاپ ایران. هر سه نفر بخاطر این ترانه زندانی شدند.",lyrics:""}
+      ]},
+      { id:"alb-d-05", title:"دست‌های تو / چشم من", year:"دهه ۵۰", composer:"حسن شماعی‌زاده", poet:"اردلان سرفراز", arranger:"واروژان", director:"", story:"«دست‌های تو» طبق نظرسنجی شبکه من‌وتو رتبه اول ۱۰۰ ترانه برتر تاریخ موسیقی ایران را کسب کرد.", songs:[
+        {id:"s-d-007",title:"دست‌های تو",year:"دهه ۵۰",poet:"اردلان سرفراز",composer:"حسن شماعی‌زاده",arranger:"واروژان",director:"",story:"رتبه اول در نظرسنجی ۱۰۰ ترانه برتر تاریخ موسیقی ایران (شبکه من‌وتو).",lyrics:""},
+        {id:"s-d-008",title:"چشم من",year:"دهه ۵۰",poet:"اردلان سرفراز",composer:"حسن شماعی‌زاده",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-d-06", title:"شقایق", year:"دهه ۵۰", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"", story:"از شاخص‌ترین آثار دوره طلایی همکاری داریوش، بابک بیات و ایرج جنتی عطایی.", songs:[
+        {id:"s-d-009",title:"شقایق",year:"دهه ۵۰",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-d-07", title:"دوباره می‌سازمت وطن", year:"دهه ۶۰", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"", story:"سرود میهنی داریوش در تبعید. یکی از ماندگارترین آثار پس از انقلاب.", songs:[
+        {id:"s-d-010",title:"دوباره می‌سازمت وطن",year:"دهه ۶۰",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"پس از انقلاب در تبعید ساخته شد. بازتاب دلتنگی عمیق برای ایران.",lyrics:""}
+      ]},
+      { id:"alb-d-08", title:"نون و پنیر و سبزی", year:"دهه ۵۰", composer:"واروژان", poet:"شهیار قنبری", arranger:"واروژان", director:"", story:"", songs:[
+        {id:"s-d-011",title:"نون و پنیر و سبزی",year:"دهه ۵۰",poet:"شهیار قنبری",composer:"واروژان",arranger:"واروژان",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-d-09", title:"شام مهتاب", year:"دهه ۵۰", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
+        {id:"s-d-012",title:"شام مهتاب",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-d-10", title:"دنیای این روزای من", year:"دهه ۷۰", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
+        {id:"s-d-013",title:"دنیای این روزای من",year:"دهه ۷۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]}
+    ],
+    singles: [
+      {id:"s-d-101",title:"زندونی",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"فرزان دلجو",story:"برای فیلم «گذر اکبر» خوانده شد. از ترانه‌های سیاسی داریوش.",lyrics:""},
+      {id:"s-d-102",title:"زهره",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"",story:"برای فیلم «رهایی» خوانده شد.",lyrics:""},
+      {id:"s-d-103",title:"بچه‌ها",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
+      {id:"s-d-104",title:"جشن دلتنگی",year:"دهه ۶۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
+      {id:"s-d-105",title:"ای عشق",year:"دهه ۶۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
+      {id:"s-d-106",title:"سال سقوط سال فرار",year:"دهه ۶۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+    ]
+  },
+  hayedeh: {
+    id: "hayedeh", name: "هایده", fullName: "معصومه دده‌بالا", title: "دیوای ایران",
+    born: "۲۱ فروردین ۱۳۲۱", died: "۳۰ دی ۱۳۶۸", birthPlace: "تهران", voiceType: "آلتو",
+    color: "#6B1A3A", colorLight: "#ffb3d1", colorDark: "#1a0a18",
+    bio: "در طول دو دهه فعالیت و اجرای بیش از ۲۰۰ ترانه، به‌واسطه صدای اپرایی و آلتوی نادر به شهرت رسید. خواهر بزرگ‌تر مهستی. یک روز پس از کنسرت در کالیفرنیا، در ۴۷ سالگی بر اثر سکته قلبی درگذشت. در ۱۳۹۸ ستاره‌ای به نامش در بلوار مشاهیر لس‌آنجلس نصب شد.",
+    albums: [
+      { id:"alb-h-01", title:"آزاده", year:"۱۳۴۷", composer:"علی تجویدی", poet:"رهی معیری", arranger:"ارکستر گل‌ها", director:"", story:"اولین ترانه حرفه‌ای هایده. علی تجویدی پس از شنیدن صدای هایده گفت رجیستری‌های نادری در عمق صدای آلتوی او می‌بیند.", songs:[
+        {id:"s-h-001",title:"آزاده",year:"۱۳۴۷",poet:"رهی معیری",composer:"علی تجویدی",arranger:"ارکستر گل‌ها",director:"",story:"اولین ترانه رسمی هایده. با ارکستر گل‌ها در رادیو تهران پخش شد.",lyrics:""}
+      ]},
+      { id:"alb-h-02", title:"فرار از بهشت", year:"۱۳۵۳", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
+        {id:"s-h-002",title:"فرار از بهشت",year:"۱۳۵۳",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-03", title:"رانده شده", year:"۱۳۵۴", composer:"", poet:"", arranger:"", director:"", story:"از مجموعه ترانه‌های دوران مهاجرت هایده که برای ایرانیان تبعیدی مایه تسکین بود.", songs:[
+        {id:"s-h-003",title:"رانده شده",year:"۱۳۵۴",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-04", title:"میهمان", year:"۱۳۵۵", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
+        {id:"s-h-004",title:"میهمان",year:"۱۳۵۵",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-05", title:"بهانه", year:"دهه ۵۰", composer:"حسن شماعی‌زاده", poet:"اردلان سرفراز", arranger:"واروژان", director:"", story:"از مشهورترین همکاری‌های هایده با شماعی‌زاده.", songs:[
+        {id:"s-h-005",title:"بهانه",year:"دهه ۵۰",poet:"اردلان سرفراز",composer:"حسن شماعی‌زاده",arranger:"واروژان",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-06", title:"زمونه", year:"۱۳۶۲", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
+        {id:"s-h-006",title:"زمونه",year:"۱۳۶۲",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-07", title:"دل من", year:"۱۳۶۳", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
+        {id:"s-h-007",title:"دل من",year:"۱۳۶۳",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-08", title:"یا رب و هم نفس و گلریز", year:"۱۳۶۶", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
+        {id:"s-h-008",title:"یا رب",year:"۱۳۶۶",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
+        {id:"s-h-009",title:"هم نفس",year:"۱۳۶۶",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
+        {id:"s-h-010",title:"گلریز",year:"۱۳۶۶",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-09", title:"شب عشق", year:"دهه ۶۰", composer:"صادق نوجوکی", poet:"", arranger:"صادق نوجوکی", director:"", story:"پرفروش‌ترین آلبوم هایده. شرکت ترانه آن را پرفروش‌ترین آلبوم دهه ۶۰ معرفی کرد.", songs:[
+        {id:"s-h-011",title:"شب عشق",year:"دهه ۶۰",poet:"",composer:"صادق نوجوکی",arranger:"صادق نوجوکی",director:"",story:"",lyrics:""}
+      ]},
+      { id:"alb-h-10", title:"بزن تار", year:"۱۳۶۹", composer:"صادق نوجوکی", poet:"", arranger:"صادق نوجوکی", director:"", story:"آلبوم سال ۱۹۹۰. بسیاری آن را شاهکار دوران تبعید هایده می‌دانند.", songs:[
+        {id:"s-h-012",title:"بزن تار",year:"۱۳۶۹",poet:"",composer:"صادق نوجوکی",arranger:"صادق نوجوکی",director:"",story:"آخرین آلبوم منتشرشده در زمان حیات هایده. عنوان آلبوم سال ۱۹۹۰.",lyrics:""}
+      ]}
+    ],
+    singles: [
+      {id:"s-h-101",title:"یکی را دوست می‌دارم",year:"دهه ۶۰",poet:"معین (ترانه‌سرا)",composer:"صادق نوجوکی",arranger:"صادق نوجوکی",director:"",story:"معین این ترانه را مستقیماً برای هایده نوشت. نقطه عطف کار هایده در دوران تبعید.",lyrics:""},
+      {id:"s-h-102",title:"بهار بهار باز اومده دوباره",year:"۱۳۶۱",poet:"",composer:"",arranger:"",director:"",story:"اولین ترانه مهم هایده پس از مهاجرت به لس‌آنجلس. درباره دلتنگی برای ایران، با بازخورد فوق‌العاده.",lyrics:""},
+      {id:"s-h-103",title:"کی می‌دونه",year:"۱۳۶۱",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
+      {id:"s-h-104",title:"زندگی",year:"۱۳۶۱",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
+    ]
+  }
+};
+
+let currentArtist = null;
+let history = ['home'];
+let currentSongTabs = ['اطلاعات','داستان','متن','نت'];
+
+function val(v) { return v ? `<span class="info-val">${v}</span>` : `<span class="info-val empty">—</span>`; }
+
+function openArtist(id) {
+  currentArtist = DATA[id];
+  const a = currentArtist;
+  const c = a.colorLight;
+  const cd = a.colorDark;
+
+  document.getElementById('artist-hero').innerHTML = `
+    <div style="font-size:11px;letter-spacing:2px;color:${c};text-transform:uppercase;margin-bottom:6px;font-weight:600">${a.title}</div>
+    <div class="artist-hero-name">${a.name}</div>
+    <div class="artist-hero-sub">${a.fullName} · متولد ${a.born}${a.died ? ' · درگذشته '+a.died : ''}</div>
+    <div class="artist-bio">${a.bio}</div>
+    <div class="artist-tags">
+      <span class="tag" style="color:${c};border-color:${a.color}">${a.voiceType}</span>
+      <span class="tag" style="color:${c};border-color:${a.color}">${a.birthPlace}</span>
+      ${a.died ? `<span class="tag" style="color:var(--muted);border-color:var(--border)">درگذشته</span>` : ''}
+    </div>
+  `;
+
+  // color tabs
+  document.querySelectorAll('.sec-tab').forEach(t => t.style.borderBottomColor = '');
+  document.getElementById('tab-albums').style.setProperty('--tab-active', c);
+
+  // Albums
+  let albHTML = '<div class="list-section">';
+  a.albums.forEach((alb,i) => {
+    const hasMeta = alb.composer || alb.poet;
+    albHTML += `<div class="item-row" onclick="openAlbum('${alb.id}')">
+      <div class="item-num" style="background:${cd};color:${c}">${i+1}</div>
+      <div class="item-info">
+        <div class="item-title">${alb.title}</div>
+        <div class="item-sub">${alb.year}${hasMeta ? ' · '+[alb.poet,alb.composer].filter(Boolean).join(' · ') : ''}</div>
+      </div>
+      <div class="item-arrow">›</div>
+    </div>`;
+  });
+  albHTML += '</div>';
+  document.getElementById('panel-albums').innerHTML = albHTML;
+
+  // Singles
+  let sinHTML = '<div class="list-section">';
+  a.singles.forEach((s,i) => {
+    const hasMeta = s.composer || s.poet;
+    sinHTML += `<div class="item-row" onclick="openSong('${s.id}', null)">
+      <div class="item-num" style="background:${cd};color:${c}">${i+1}</div>
+      <div class="item-info">
+        <div class="item-title">${s.title}</div>
+        <div class="item-sub">${s.year}${hasMeta ? ' · '+[s.poet,s.composer].filter(Boolean).join(' · ') : ''}</div>
+      </div>
+      <div class="item-arrow">›</div>
+    </div>`;
+  });
+  sinHTML += '</div>';
+  document.getElementById('panel-singles').innerHTML = sinHTML;
+
+  switchSection('albums');
+  navigate('artist', a.name);
+}
+
+function openAlbum(albumId) {
+  const a = currentArtist;
+  const alb = a.albums.find(x => x.id === albumId);
+  const c = a.colorLight, cd = a.colorDark;
+
+  document.getElementById('album-hero').innerHTML = `
+    <div style="font-size:11px;color:${c};font-weight:600;letter-spacing:1px;margin-bottom:4px">آلبوم</div>
+    <div class="album-title">${alb.title}</div>
+    <div class="album-year">${alb.year}</div>
+    ${alb.poet ? `<div class="album-info-row"><span class="album-info-label">شاعر</span><span class="album-info-val">${alb.poet}</span></div>` : ''}
+    ${alb.composer ? `<div class="album-info-row"><span class="album-info-label">آهنگساز</span><span class="album-info-val">${alb.composer}</span></div>` : ''}
+    ${alb.arranger ? `<div class="album-info-row"><span class="album-info-label">تنظیم‌کننده</span><span class="album-info-val">${alb.arranger}</span></div>` : ''}
+    ${alb.director ? `<div class="album-info-row"><span class="album-info-label">کارگردان</span><span class="album-info-val">${alb.director}</span></div>` : ''}
+    ${alb.story ? `<div class="album-story">${alb.story}</div>` : ''}
+  `;
+
+  let songsHTML = '';
+  alb.songs.forEach((s,i) => {
+    songsHTML += `<div class="item-row" onclick="openSong('${s.id}', '${albumId}')">
+      <div class="item-num" style="background:${cd};color:${c}">${i+1}</div>
+      <div class="item-info">
+        <div class="item-title">${s.title}</div>
+        <div class="item-sub">${s.year}${s.poet ? ' · '+s.poet : ''}</div>
+      </div>
+      <div class="item-arrow">›</div>
+    </div>`;
+  });
+  document.getElementById('album-songs').innerHTML = songsHTML;
+
+  navigate('album', alb.title);
+}
+
+function openSong(songId, albumId) {
+  const a = currentArtist;
+  const c = a.colorLight, cd = a.colorDark;
+  let song = null;
+
+  if (albumId) {
+    const alb = a.albums.find(x => x.id === albumId);
+    song = alb.songs.find(x => x.id === songId);
+  } else {
+    song = a.singles.find(x => x.id === songId);
+  }
+  if (!song) return;
+
+  document.getElementById('song-hero').innerHTML = `
+    <div style="font-size:11px;color:${c};font-weight:600;letter-spacing:1px;margin-bottom:4px">${a.name}</div>
+    <div class="song-hero-title">${song.title}</div>
+    <div class="song-hero-artist">${song.year}</div>
+    <div class="song-nav-tabs">
+      <button class="song-tab active" onclick="switchSongTab(0,this)" style="background:${c};border-color:${c};color:#000">اطلاعات</button>
+      <button class="song-tab" onclick="switchSongTab(1,this)">داستان</button>
+      <button class="song-tab" onclick="switchSongTab(2,this)">متن ترانه</button>
+      <button class="song-tab" onclick="switchSongTab(3,this)">نت</button>
+    </div>
+  `;
+
+  // Info panel
+  document.getElementById('sp-info').innerHTML = `
+    <div class="info-grid">
+      <div class="info-row"><span class="info-label">خواننده</span>${val(a.fullName)}</div>
+      <div class="info-row"><span class="info-label">سال</span>${val(song.year)}</div>
+      <div class="info-row"><span class="info-label">شاعر / ترانه‌سرا</span>${val(song.poet)}</div>
+      <div class="info-row"><span class="info-label">آهنگساز</span>${val(song.composer)}</div>
+      <div class="info-row"><span class="info-label">تنظیم‌کننده</span>${val(song.arranger)}</div>
+      <div class="info-row"><span class="info-label">کارگردان</span>${val(song.director)}</div>
+    </div>
+  `;
+
+  // Story panel
+  document.getElementById('sp-story').innerHTML = song.story
+    ? `<p class="story-text">${song.story}</p>`
+    : `<div class="no-content"><div class="no-content-icon">📖</div>داستانی برای این ترانه ثبت نشده</div>`;
+
+  // Lyrics panel
+  document.getElementById('sp-lyrics').innerHTML = song.lyrics
+    ? `<pre class="lyrics-text">${song.lyrics}</pre>`
+    : `<div class="no-content"><div class="no-content-icon">🎵</div>متن ترانه هنوز اضافه نشده</div>`;
+
+  // Sheet music
+  document.getElementById('sp-sheet').innerHTML = `
+    <div class="no-content"><div class="no-content-icon">🎼</div>نت این ترانه هنوز اضافه نشده</div>
+  `;
+
+  // reset tabs
+  document.querySelectorAll('.song-tab').forEach(t => {
+    t.classList.remove('active');
+    t.style.background = '';
+    t.style.borderColor = '';
+    t.style.color = '';
+  });
+  const firstTab = document.querySelector('.song-tab');
+  if (firstTab) {
+    firstTab.classList.add('active');
+    firstTab.style.background = c;
+    firstTab.style.borderColor = c;
+    firstTab.style.color = '#000';
+  }
+  ['sp-info','sp-story','sp-lyrics','sp-sheet'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('active', i===0);
+  });
+
+  navigate('song', song.title);
+}
+
+function switchSongTab(idx, btn) {
+  const a = currentArtist;
+  const c = a ? a.colorLight : '#c9a0ff';
+  document.querySelectorAll('.song-tab').forEach(t => {
+    t.classList.remove('active');
+    t.style.background = '';
+    t.style.borderColor = '';
+    t.style.color = '';
+  });
+  btn.classList.add('active');
+  btn.style.background = c;
+  btn.style.borderColor = c;
+  btn.style.color = '#000';
+  ['sp-info','sp-story','sp-lyrics','sp-sheet'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('active', i===idx);
+  });
+}
+
+function switchSection(section) {
+  ['albums','singles'].forEach(s => {
+    document.getElementById('tab-'+s).classList.toggle('active', s===section);
+    document.getElementById('panel-'+s).classList.toggle('active', s===section);
+  });
+  const c = currentArtist ? currentArtist.colorLight : '#fff';
+  document.getElementById('tab-'+section).style.borderBottomColor = c;
+  document.getElementById('tab-'+section === 'tab-albums' ? 'tab-singles' : 'tab-albums').style.borderBottomColor = 'transparent';
+}
+
+function navigate(page, title) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-'+page);
+  target.classList.add('active');
+  target.classList.remove('fade-in');
+  void target.offsetWidth;
+  target.classList.add('fade-in');
+  document.getElementById('navTitle').textContent = title || 'موسیقی جاودان';
+  document.getElementById('navBack').classList.add('visible');
+  history.push(page);
+  window.scrollTo(0,0);
+}
+
+function goBack() {
+  history.pop();
+  const prev = history[history.length-1];
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+prev).classList.add('active');
+  if (prev === 'home') {
+    document.getElementById('navTitle').textContent = 'موسیقی جاودان';
+    document.getElementById('navBack').classList.remove('visible');
+  } else if (prev === 'artist') {
+    document.getElementById('navTitle').textContent = currentArtist ? currentArtist.name : '';
+  } else if (prev === 'album') {
+    document.getElementById('navTitle').textContent = 'آلبوم';
+  }
+  window.scrollTo(0,0);
+}
+
+// Init stats
+document.getElementById('stat-d-alb').textContent = DATA.dariush.albums.length;
+document.getElementById('stat-d-s').textContent = DATA.dariush.singles.length;
+document.getElementById('stat-h-alb').textContent = DATA.hayedeh.albums.length;
+document.getElementById('stat-h-s').textContent = DATA.hayedeh.singles.length;
+
+// PWA service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
