@@ -2,625 +2,527 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0d0d0d">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="موسیقی جاودان">
 <link rel="manifest" href="manifest.json">
 <title>موسیقی جاودان</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600&display=swap');
-
-  :root {
-    --bg: #0d0d0d;
-    --surface: #181818;
-    --surface2: #222222;
-    --border: #2a2a2a;
-    --text: #f0f0f0;
-    --muted: #777;
-    --accent: #c9a0ff;
-    --accent-d: #3B1F6B;
-    --accent-h: #FFB3D1;
-    --accent-hd: #6B1A3A;
-    --radius: 14px;
-    --pad: 16px;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'Vazirmatn', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ---- NAV ---- */
-  .nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(13,13,13,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px var(--pad);
-    height: 56px;
-  }
-  .nav-title { font-size: 16px; font-weight: 500; }
-  .nav-back { background: none; border: none; color: var(--text); font-size: 22px; cursor: pointer; padding: 4px 8px; display: none; }
-  .nav-back.visible { display: block; }
-
-  /* ---- PAGES ---- */
-  .page { display: none; padding-top: 68px; padding-bottom: 24px; min-height: 100vh; }
-  .page.active { display: block; }
-
-  /* ---- HOME ---- */
-  .home-header {
-    text-align: center; padding: 32px var(--pad) 24px;
-  }
-  .home-header h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
-  .home-header p { font-size: 14px; color: var(--muted); }
-
-  .artist-cards {
-    display: flex; flex-direction: column; gap: 12px;
-    padding: 0 var(--pad);
-  }
-  .artist-card {
-    border-radius: var(--radius);
-    padding: 24px 20px;
-    cursor: pointer;
-    transition: transform 0.15s, opacity 0.15s;
-    position: relative; overflow: hidden;
-  }
-  .artist-card:active { transform: scale(0.98); opacity: 0.9; }
-  .artist-card-d { background: linear-gradient(135deg, #1a0a2e 0%, #2d1060 100%); border: 1px solid #3B1F6B; }
-  .artist-card-h { background: linear-gradient(135deg, #1a0a18 0%, #501030 100%); border: 1px solid #6B1A3A; }
-  .card-label { font-size: 11px; font-weight: 500; letter-spacing: 2px; opacity: 0.7; margin-bottom: 6px; text-transform: uppercase; }
-  .card-name { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
-  .card-title { font-size: 13px; opacity: 0.7; margin-bottom: 16px; }
-  .card-stats { display: flex; gap: 20px; }
-  .card-stat { font-size: 12px; opacity: 0.8; }
-  .card-stat span { font-weight: 600; font-size: 16px; display: block; margin-bottom: 2px; }
-  .card-deco {
-    position: absolute; left: -20px; top: -20px;
-    width: 120px; height: 120px; border-radius: 50%;
-    opacity: 0.06;
-  }
-  .card-deco-d { background: #c9a0ff; }
-  .card-deco-h { background: #ffb3d1; }
-
-  /* ---- ARTIST PAGE ---- */
-  .artist-hero {
-    padding: 20px var(--pad) 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .artist-hero-name { font-size: 24px; font-weight: 600; margin-bottom: 2px; }
-  .artist-hero-sub { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
-  .artist-bio { font-size: 13px; line-height: 1.8; color: #aaa; margin-bottom: 16px; }
-  .artist-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-  .tag {
-    font-size: 11px; padding: 4px 10px; border-radius: 20px;
-    border: 1px solid; font-weight: 500;
-  }
-
-  .section-tabs {
-    display: flex; border-bottom: 1px solid var(--border);
-    position: sticky; top: 56px; background: var(--bg); z-index: 10;
-  }
-  .sec-tab {
-    flex: 1; padding: 14px; text-align: center;
-    font-size: 14px; font-weight: 500; color: var(--muted);
-    cursor: pointer; border: none; background: none;
-    border-bottom: 2px solid transparent;
-    transition: all 0.15s;
-  }
-  .sec-tab.active { color: var(--text); }
-
-  .section-panel { display: none; }
-  .section-panel.active { display: block; }
-
-  .list-section { padding: 8px 0; }
-  .list-header {
-    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
-    color: var(--muted); text-transform: uppercase;
-    padding: 16px var(--pad) 8px;
-  }
-
-  .item-row {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px var(--pad);
-    cursor: pointer; transition: background 0.1s;
-    border-bottom: 1px solid var(--border);
-  }
-  .item-row:active { background: var(--surface); }
-  .item-num {
-    width: 28px; height: 28px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 600; flex-shrink: 0;
-  }
-  .item-info { flex: 1; min-width: 0; }
-  .item-title { font-size: 15px; font-weight: 500; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .item-sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .item-arrow { color: var(--muted); font-size: 16px; flex-shrink: 0; }
-
-  .album-badge {
-    display: inline-block; font-size: 10px; padding: 2px 7px;
-    border-radius: 10px; margin-right: 6px; vertical-align: middle;
-    font-weight: 500;
-  }
-
-  /* ---- SONG DETAIL PAGE ---- */
-  .song-hero {
-    padding: 24px var(--pad) 20px;
-    border-bottom: 1px solid var(--border);
-  }
-  .song-hero-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-  .song-hero-artist { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
-  .song-nav-tabs {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-  .song-nav-tabs::-webkit-scrollbar { display: none; }
-  .song-tab {
-    flex-shrink: 0; padding: 8px 16px; border-radius: 20px;
-    font-size: 13px; font-weight: 500; cursor: pointer;
-    border: 1px solid var(--border); background: none;
-    color: var(--muted); transition: all 0.15s;
-  }
-  .song-tab.active { color: var(--bg); }
-
-  .song-panel { display: none; padding: var(--pad); }
-  .song-panel.active { display: block; }
-
-  .info-grid { display: flex; flex-direction: column; gap: 1px; }
-  .info-row {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 14px 0; border-bottom: 1px solid var(--border);
-  }
-  .info-row:last-child { border-bottom: none; }
-  .info-label { font-size: 12px; color: var(--muted); min-width: 100px; flex-shrink: 0; padding-top: 1px; }
-  .info-val { font-size: 14px; color: var(--text); flex: 1; line-height: 1.6; }
-  .info-val.empty { color: var(--muted); font-style: italic; font-size: 13px; }
-
-  .story-text { font-size: 15px; line-height: 2; color: #ccc; }
-  .no-content { text-align: center; padding: 48px 0; color: var(--muted); font-size: 14px; }
-  .no-content-icon { font-size: 40px; margin-bottom: 12px; }
-
-  .lyrics-text {
-    font-size: 15px; line-height: 2.2; color: #ccc;
-    white-space: pre-wrap; text-align: center;
-    font-weight: 300;
-  }
-
-  .sheet-music { text-align: center; padding: 24px 0; color: var(--muted); font-size: 14px; }
-
-  /* ---- ALBUM DETAIL ---- */
-  .album-hero { padding: 20px var(--pad); border-bottom: 1px solid var(--border); }
-  .album-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-  .album-year { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
-  .album-info-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
-  .album-info-label { color: var(--muted); min-width: 80px; }
-  .album-info-val { color: var(--text); }
-  .album-story { font-size: 13px; line-height: 1.8; color: #aaa; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-
-  /* ---- UTILS ---- */
-  .fade-in { animation: fadeIn 0.2s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-  .empty-badge {
-    display: inline-block; font-size: 10px; color: var(--muted);
-    border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; margin-right: 4px;
-  }
+:root{--bg:#0a0a0a;--s1:#161616;--s2:#1e1e1e;--bd:#2a2a2a;--tx:#f0f0f0;--mt:#666;--r:12px;--p:16px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;height:52px;padding:0 var(--p);gap:8px}
+.nav-back{background:none;border:none;color:var(--tx);font-size:22px;cursor:pointer;padding:4px 8px;display:none;flex-shrink:0}
+.nav-back.show{display:block}
+.nav-title{font-size:15px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page{display:none;padding-top:60px;min-height:100vh}
+.page.active{display:block}
+/* HOME */
+.home-hero{text-align:center;padding:28px var(--p) 16px}
+.home-hero h1{font-size:22px;font-weight:600;margin-bottom:4px}
+.home-hero p{font-size:12px;color:var(--mt)}
+.artist-list{padding:0 var(--p);display:flex;flex-direction:column;gap:10px}
+.ac{border-radius:var(--r);padding:18px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.ac:active{transform:scale(.98)}
+.ac-deco{position:absolute;left:-15px;top:-15px;width:90px;height:90px;border-radius:50%;opacity:.07}
+.ac-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;opacity:.6;margin-bottom:3px}
+.ac-name{font-size:24px;font-weight:700;margin-bottom:2px}
+.ac-sub{font-size:11px;opacity:.6;margin-bottom:12px}
+.ac-stats{display:flex;gap:14px}
+.ac-stat span{font-size:17px;font-weight:600;display:block}
+.ac-stat p{font-size:10px;opacity:.7}
+/* ARTIST */
+.ah{padding:16px var(--p) 12px;border-bottom:1px solid var(--bd)}
+.ah-tag{font-size:10px;letter-spacing:2px;font-weight:600;text-transform:uppercase;margin-bottom:3px}
+.ah-name{font-size:20px;font-weight:600;margin-bottom:2px}
+.ah-sub{font-size:11px;color:var(--mt);margin-bottom:8px}
+.ah-bio{font-size:12px;line-height:1.8;color:#aaa}
+/* TABS */
+.stabs{display:flex;border-bottom:1px solid var(--bd);position:sticky;top:52px;background:var(--bg);z-index:10;overflow-x:auto;scrollbar-width:none}
+.stabs::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;padding:11px 14px;font-size:12px;font-weight:500;color:var(--mt);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.stab.active{color:var(--tx)}
+.spanel{display:none}
+.spanel.active{display:block}
+/* LIST */
+.lbl{font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--mt);text-transform:uppercase;padding:12px var(--p) 5px}
+.row{display:flex;align-items:center;gap:10px;padding:10px var(--p);border-bottom:1px solid var(--bd);cursor:pointer;transition:background .1s}
+.row:active{background:var(--s1)}
+.rnum{width:25px;height:25px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.rinfo{flex:1;min-width:0}
+.rtitle{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px}
+.rsub{font-size:11px;color:var(--mt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rarr{color:var(--mt);font-size:15px;flex-shrink:0}
+.jbadge{font-size:10px;padding:1px 6px;border-radius:8px;background:var(--s2);border:1px solid var(--bd);color:var(--mt);display:inline-block;margin-top:2px}
+.nbadge{font-size:10px;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,.06);color:var(--mt);display:inline-block;margin-top:2px}
+/* ALBUM */
+.albh{padding:16px var(--p);border-bottom:1px solid var(--bd)}
+.alb-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:3px}
+.alb-title{font-size:18px;font-weight:600;margin-bottom:2px}
+.alb-year{font-size:11px;color:var(--mt);margin-bottom:8px}
+.alb-mr{font-size:12px;margin-bottom:3px;display:flex;gap:6px}
+.alb-ml{color:var(--mt);min-width:75px;flex-shrink:0}
+.alb-story{font-size:12px;line-height:1.8;color:#aaa;margin-top:8px;padding-top:8px;border-top:1px solid var(--bd)}
+/* SONG */
+.sng-hero{padding:16px var(--p) 10px;border-bottom:1px solid var(--bd)}
+.sng-tag{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;margin-bottom:3px}
+.sng-title{font-size:18px;font-weight:600;margin-bottom:2px}
+.sng-year{font-size:11px;color:var(--mt);margin-bottom:12px}
+.stabs2{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.stabs2::-webkit-scrollbar{display:none}
+.stab2{flex-shrink:0;padding:6px 12px;border-radius:18px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:none;color:var(--mt);transition:all .15s}
+.stab2.active{color:#000}
+.spanel2{display:none;padding:var(--p)}
+.spanel2.active{display:block}
+.irow{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.irow:last-child{border:none}
+.ilbl{color:var(--mt);min-width:95px;flex-shrink:0}
+.ival{color:var(--tx)}
+.iempty{color:var(--mt);font-style:italic}
+.story{font-size:13px;line-height:2;color:#ccc}
+.lyrics{font-size:13px;line-height:2.3;color:#ccc;text-align:center;white-space:pre-wrap}
+.nodata{text-align:center;padding:40px 0;color:var(--mt)}
+.nodata-ic{font-size:34px;margin-bottom:8px}
+/* TOP20 */
+.t20row{display:flex;align-items:center;gap:10px;padding:10px var(--p);border-bottom:1px solid var(--bd)}
+.t20rank{width:24px;text-align:center;font-size:12px;font-weight:600;color:var(--mt);flex-shrink:0}
+.gold{color:#FFD700}.silver{color:#C0C0C0}.bronze{color:#CD7F32}
+.fade{animation:fi .18s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
-
 <nav class="nav">
-  <button class="nav-back" id="navBack" onclick="goBack()">&#8592;</button>
-  <div class="nav-title" id="navTitle">موسیقی جاودان</div>
-  <div style="width:40px"></div>
+  <button class="nav-back" id="nb" onclick="goBack()">&#8592;</button>
+  <div class="nav-title" id="nt">موسیقی جاودان</div>
 </nav>
-
-<!-- HOME -->
-<div class="page active fade-in" id="page-home">
-  <div class="home-header">
-    <h1>موسیقی جاودان</h1>
-    <p>آرشیو آثار داریوش و بانو هایده</p>
-  </div>
-  <div class="artist-cards">
-    <div class="artist-card artist-card-d" onclick="openArtist('dariush')">
-      <div class="card-deco card-deco-d"></div>
-      <div class="card-label">خواننده · پاپ و راک</div>
-      <div class="card-name" style="color:#c9a0ff">داریوش</div>
-      <div class="card-title">سلطان صدا — داریوش اقبالی</div>
-      <div class="card-stats">
-        <div class="card-stat"><span id="stat-d-alb">-</span>آلبوم</div>
-        <div class="card-stat"><span id="stat-d-s">-</span>تک‌آهنگ</div>
-      </div>
-    </div>
-    <div class="artist-card artist-card-h" onclick="openArtist('hayedeh')">
-      <div class="card-deco card-deco-h"></div>
-      <div class="card-label">خواننده · پاپ و سنتی</div>
-      <div class="card-name" style="color:#ffb3d1">هایده</div>
-      <div class="card-title">دیوای ایران — معصومه دده‌بالا</div>
-      <div class="card-stats">
-        <div class="card-stat"><span id="stat-h-alb">-</span>آلبوم</div>
-        <div class="card-stat"><span id="stat-h-s">-</span>تک‌آهنگ</div>
-      </div>
-    </div>
-  </div>
-  <div style="padding: 24px var(--pad) 0; text-align: center;">
-    <p style="font-size: 12px; color: var(--muted); line-height: 1.8;">
-      فیلدهای خالی به معنی نبود اطلاعات تأییدشده است<br>
-      نه اطلاعات اشتباه
-    </p>
-  </div>
+<div class="page active" id="page-home">
+  <div class="home-hero"><h1>موسیقی جاودان</h1><p>آرشیو کامل آثار داریوش و بانو هایده</p></div>
+  <div class="artist-list" id="al"></div>
+  <div style="padding:16px var(--p);text-align:center"><p style="font-size:10px;color:var(--mt);line-height:1.8">فیلدهای خالی = اطلاعات تأییدشده در دسترس نیست</p></div>
 </div>
-
-<!-- ARTIST -->
 <div class="page" id="page-artist">
-  <div class="artist-hero" id="artist-hero"></div>
-  <div class="section-tabs">
-    <button class="sec-tab active" onclick="switchSection('albums')" id="tab-albums">آلبوم‌ها</button>
-    <button class="sec-tab" onclick="switchSection('singles')" id="tab-singles">تک‌آهنگ‌ها</button>
-  </div>
-  <div class="section-panel active" id="panel-albums"></div>
-  <div class="section-panel" id="panel-singles"></div>
+  <div class="ah" id="ah"></div>
+  <div class="stabs" id="stabs"></div>
+  <div id="spanels"></div>
 </div>
-
-<!-- ALBUM DETAIL -->
 <div class="page" id="page-album">
-  <div class="album-hero" id="album-hero"></div>
-  <div class="list-header">ترانه‌ها</div>
-  <div id="album-songs"></div>
+  <div class="albh" id="albh"></div>
+  <div class="lbl">ترانه‌ها</div>
+  <div id="albsongs"></div>
 </div>
-
-<!-- SONG DETAIL -->
 <div class="page" id="page-song">
-  <div class="song-hero" id="song-hero"></div>
-  <div class="song-panel active" id="sp-info"></div>
-  <div class="song-panel" id="sp-story"></div>
-  <div class="song-panel" id="sp-lyrics"></div>
-  <div class="song-panel" id="sp-sheet"></div>
+  <div class="sng-hero" id="sngh"></div>
+  <div id="sngpanels"></div>
 </div>
 
 <script>
-const DATA = {
-  dariush: {
-    id: "dariush", name: "داریوش", fullName: "داریوش اقبالی", title: "سلطان صدا",
-    born: "۱۵ بهمن ۱۳۲۹", birthPlace: "تهران", voiceType: "باس",
-    color: "#3B1F6B", colorLight: "#c9a0ff", colorDark: "#1a0a2e",
-    bio: "خواننده، آهنگساز و بازیگر ایرانی-آمریکایی. اولین اجرا در ۹ سالگی. ورود رسمی به موسیقی در ۱۹ سالگی با ترانه «به من نگو دوست دارم». دوره همکاری با بابک بیات و ایرج جنتی عطایی به «دوران طلایی» موسیقی پاپ ایران معروف است. عضو سازمان عفو بین‌الملل.",
-    albums: [
-      { id:"alb-d-01", title:"به من نگو دوست دارم", year:"۱۳۴۹", composer:"مصطفی جاویدان", poet:"", arranger:"", director:"", story:"اولین آلبوم حرفه‌ای داریوش در ۱۹ سالگی که او را یک‌شبه مشهور کرد.", songs:[
-        {id:"s-d-001",title:"به من نگو دوست دارم",year:"۱۳۴۹",poet:"",composer:"مصطفی جاویدان",arranger:"",director:"",story:"اولین ترانه رسمی داریوش در ۱۹ سالگی که او را یک‌شبه مشهور کرد.",lyrics:""}
-      ]},
-      { id:"alb-d-02", title:"ترانه جنگل", year:"۱۳۵۲", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"", story:"با الهام از رویداد سیاهکل ساخته شد. باعث دستگیری داریوش و ایرج جنتی عطایی در ۱۳۵۳ شد.", songs:[
-        {id:"s-d-002",title:"ترانه جنگل",year:"۱۳۵۲",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"با الهام از رویداد سیاهکل ساخته شد. همراه با «بن‌بست» و «خونه» باعث دستگیری داریوش و جنتی عطایی در ۱۳۵۳ شد.",lyrics:""},
-        {id:"s-d-003",title:"بن‌بست",year:"۱۳۵۲",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"",lyrics:""},
-        {id:"s-d-004",title:"خونه",year:"۱۳۵۲",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-d-03", title:"فریاد زیر آب", year:"دهه ۵۰", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"سیروس الوند", story:"ترانه اصلی فیلم «فریاد زیر آب» — تنها فیلمی که داریوش در آن نقش اصلی دارد.", songs:[
-        {id:"s-d-005",title:"فریاد زیر آب",year:"دهه ۵۰",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"سیروس الوند",story:"برای فیلم «فریاد زیر آب» ساخته شد. داستان درباره ولگردی است که عاشق دختر پولداری می‌شود.",lyrics:""}
-      ]},
-      { id:"alb-d-04", title:"بوی گندم", year:"دهه ۵۰", composer:"واروژان", poet:"شهیار قنبری", arranger:"واروژان", director:"", story:"این ترانه باعث شد داریوش، شهیار قنبری و واروژان هر سه به زندان بیفتند.", songs:[
-        {id:"s-d-006",title:"بوی گندم",year:"دهه ۵۰",poet:"شهیار قنبری",composer:"واروژان",arranger:"واروژان",director:"",story:"یکی از سیاسی‌ترین ترانه‌های پاپ ایران. هر سه نفر بخاطر این ترانه زندانی شدند.",lyrics:""}
-      ]},
-      { id:"alb-d-05", title:"دست‌های تو / چشم من", year:"دهه ۵۰", composer:"حسن شماعی‌زاده", poet:"اردلان سرفراز", arranger:"واروژان", director:"", story:"«دست‌های تو» طبق نظرسنجی شبکه من‌وتو رتبه اول ۱۰۰ ترانه برتر تاریخ موسیقی ایران را کسب کرد.", songs:[
-        {id:"s-d-007",title:"دست‌های تو",year:"دهه ۵۰",poet:"اردلان سرفراز",composer:"حسن شماعی‌زاده",arranger:"واروژان",director:"",story:"رتبه اول در نظرسنجی ۱۰۰ ترانه برتر تاریخ موسیقی ایران (شبکه من‌وتو).",lyrics:""},
-        {id:"s-d-008",title:"چشم من",year:"دهه ۵۰",poet:"اردلان سرفراز",composer:"حسن شماعی‌زاده",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-d-06", title:"شقایق", year:"دهه ۵۰", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"", story:"از شاخص‌ترین آثار دوره طلایی همکاری داریوش، بابک بیات و ایرج جنتی عطایی.", songs:[
-        {id:"s-d-009",title:"شقایق",year:"دهه ۵۰",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-d-07", title:"دوباره می‌سازمت وطن", year:"دهه ۶۰", composer:"بابک بیات", poet:"ایرج جنتی عطایی", arranger:"بابک بیات", director:"", story:"سرود میهنی داریوش در تبعید. یکی از ماندگارترین آثار پس از انقلاب.", songs:[
-        {id:"s-d-010",title:"دوباره می‌سازمت وطن",year:"دهه ۶۰",poet:"ایرج جنتی عطایی",composer:"بابک بیات",arranger:"بابک بیات",director:"",story:"پس از انقلاب در تبعید ساخته شد. بازتاب دلتنگی عمیق برای ایران.",lyrics:""}
-      ]},
-      { id:"alb-d-08", title:"نون و پنیر و سبزی", year:"دهه ۵۰", composer:"واروژان", poet:"شهیار قنبری", arranger:"واروژان", director:"", story:"", songs:[
-        {id:"s-d-011",title:"نون و پنیر و سبزی",year:"دهه ۵۰",poet:"شهیار قنبری",composer:"واروژان",arranger:"واروژان",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-d-09", title:"شام مهتاب", year:"دهه ۵۰", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
-        {id:"s-d-012",title:"شام مهتاب",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-d-10", title:"دنیای این روزای من", year:"دهه ۷۰", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
-        {id:"s-d-013",title:"دنیای این روزای من",year:"دهه ۷۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]}
-    ],
-    singles: [
-      {id:"s-d-101",title:"زندونی",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"فرزان دلجو",story:"برای فیلم «گذر اکبر» خوانده شد. از ترانه‌های سیاسی داریوش.",lyrics:""},
-      {id:"s-d-102",title:"زهره",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"",story:"برای فیلم «رهایی» خوانده شد.",lyrics:""},
-      {id:"s-d-103",title:"بچه‌ها",year:"دهه ۵۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
-      {id:"s-d-104",title:"جشن دلتنگی",year:"دهه ۶۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
-      {id:"s-d-105",title:"ای عشق",year:"دهه ۶۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
-      {id:"s-d-106",title:"سال سقوط سال فرار",year:"دهه ۶۰",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-    ]
-  },
-  hayedeh: {
-    id: "hayedeh", name: "هایده", fullName: "معصومه دده‌بالا", title: "دیوای ایران",
-    born: "۲۱ فروردین ۱۳۲۱", died: "۳۰ دی ۱۳۶۸", birthPlace: "تهران", voiceType: "آلتو",
-    color: "#6B1A3A", colorLight: "#ffb3d1", colorDark: "#1a0a18",
-    bio: "در طول دو دهه فعالیت و اجرای بیش از ۲۰۰ ترانه، به‌واسطه صدای اپرایی و آلتوی نادر به شهرت رسید. خواهر بزرگ‌تر مهستی. یک روز پس از کنسرت در کالیفرنیا، در ۴۷ سالگی بر اثر سکته قلبی درگذشت. در ۱۳۹۸ ستاره‌ای به نامش در بلوار مشاهیر لس‌آنجلس نصب شد.",
-    albums: [
-      { id:"alb-h-01", title:"آزاده", year:"۱۳۴۷", composer:"علی تجویدی", poet:"رهی معیری", arranger:"ارکستر گل‌ها", director:"", story:"اولین ترانه حرفه‌ای هایده. علی تجویدی پس از شنیدن صدای هایده گفت رجیستری‌های نادری در عمق صدای آلتوی او می‌بیند.", songs:[
-        {id:"s-h-001",title:"آزاده",year:"۱۳۴۷",poet:"رهی معیری",composer:"علی تجویدی",arranger:"ارکستر گل‌ها",director:"",story:"اولین ترانه رسمی هایده. با ارکستر گل‌ها در رادیو تهران پخش شد.",lyrics:""}
-      ]},
-      { id:"alb-h-02", title:"فرار از بهشت", year:"۱۳۵۳", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
-        {id:"s-h-002",title:"فرار از بهشت",year:"۱۳۵۳",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-03", title:"رانده شده", year:"۱۳۵۴", composer:"", poet:"", arranger:"", director:"", story:"از مجموعه ترانه‌های دوران مهاجرت هایده که برای ایرانیان تبعیدی مایه تسکین بود.", songs:[
-        {id:"s-h-003",title:"رانده شده",year:"۱۳۵۴",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-04", title:"میهمان", year:"۱۳۵۵", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
-        {id:"s-h-004",title:"میهمان",year:"۱۳۵۵",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-05", title:"بهانه", year:"دهه ۵۰", composer:"حسن شماعی‌زاده", poet:"اردلان سرفراز", arranger:"واروژان", director:"", story:"از مشهورترین همکاری‌های هایده با شماعی‌زاده.", songs:[
-        {id:"s-h-005",title:"بهانه",year:"دهه ۵۰",poet:"اردلان سرفراز",composer:"حسن شماعی‌زاده",arranger:"واروژان",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-06", title:"زمونه", year:"۱۳۶۲", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
-        {id:"s-h-006",title:"زمونه",year:"۱۳۶۲",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-07", title:"دل من", year:"۱۳۶۳", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
-        {id:"s-h-007",title:"دل من",year:"۱۳۶۳",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-08", title:"یا رب و هم نفس و گلریز", year:"۱۳۶۶", composer:"", poet:"", arranger:"", director:"", story:"", songs:[
-        {id:"s-h-008",title:"یا رب",year:"۱۳۶۶",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
-        {id:"s-h-009",title:"هم نفس",year:"۱۳۶۶",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
-        {id:"s-h-010",title:"گلریز",year:"۱۳۶۶",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-09", title:"شب عشق", year:"دهه ۶۰", composer:"صادق نوجوکی", poet:"", arranger:"صادق نوجوکی", director:"", story:"پرفروش‌ترین آلبوم هایده. شرکت ترانه آن را پرفروش‌ترین آلبوم دهه ۶۰ معرفی کرد.", songs:[
-        {id:"s-h-011",title:"شب عشق",year:"دهه ۶۰",poet:"",composer:"صادق نوجوکی",arranger:"صادق نوجوکی",director:"",story:"",lyrics:""}
-      ]},
-      { id:"alb-h-10", title:"بزن تار", year:"۱۳۶۹", composer:"صادق نوجوکی", poet:"", arranger:"صادق نوجوکی", director:"", story:"آلبوم سال ۱۹۹۰. بسیاری آن را شاهکار دوران تبعید هایده می‌دانند.", songs:[
-        {id:"s-h-012",title:"بزن تار",year:"۱۳۶۹",poet:"",composer:"صادق نوجوکی",arranger:"صادق نوجوکی",director:"",story:"آخرین آلبوم منتشرشده در زمان حیات هایده. عنوان آلبوم سال ۱۹۹۰.",lyrics:""}
-      ]}
-    ],
-    singles: [
-      {id:"s-h-101",title:"یکی را دوست می‌دارم",year:"دهه ۶۰",poet:"معین (ترانه‌سرا)",composer:"صادق نوجوکی",arranger:"صادق نوجوکی",director:"",story:"معین این ترانه را مستقیماً برای هایده نوشت. نقطه عطف کار هایده در دوران تبعید.",lyrics:""},
-      {id:"s-h-102",title:"بهار بهار باز اومده دوباره",year:"۱۳۶۱",poet:"",composer:"",arranger:"",director:"",story:"اولین ترانه مهم هایده پس از مهاجرت به لس‌آنجلس. درباره دلتنگی برای ایران، با بازخورد فوق‌العاده.",lyrics:""},
-      {id:"s-h-103",title:"کی می‌دونه",year:"۱۳۶۱",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""},
-      {id:"s-h-104",title:"زندگی",year:"۱۳۶۱",poet:"",composer:"",arranger:"",director:"",story:"",lyrics:""}
-    ]
-  }
+const A={
+  dariush:{id:"dariush",name:"داریوش",full:"داریوش اقبالی",title:"سلطان صدا",born:"۱۵ بهمن ۱۳۲۹",died:"",voice:"باس",c:"#4B2A8A",l:"#C9A0FF",d:"#1E0A3C",bio:"خواننده، بازیگر و فعال اجتماعی ایرانی در سبک پاپ و راک. جنس صدا: باس. عضو سازمان عفو بین‌الملل. فعال از ۱۳۴۹ تا کنون.",secs:["آلبوم‌های استودیویی","گردآوری‌شده","کنسرت‌ها","ترانه‌های فیلم","تک‌آهنگ‌ها"]},
+  hayedeh:{id:"hayedeh",name:"هایده",full:"معصومه دده‌بالا",title:"دیوای ایران",born:"۲۱ فروردین ۱۳۲۱",died:"۳۰ دی ۱۳۶۸",voice:"آلتو",c:"#7B1A3A",l:"#FFB3D1",d:"#2A0010",bio:"خوانندهٔ ایرانی با بیش از ۲۰۰ ترانه و ۳۰ آلبوم. خواهر بزرگ‌تر مهستی. در ۴۷ سالگی بر اثر ایست قلبی در سان فرانسیسکو درگذشت.",secs:["آلبوم‌ها","گردآوری‌شده","کنسرت‌ها","ترانه‌های فیلم","تک‌آهنگ‌ها","۲۰ برتر"]}
 };
 
-let currentArtist = null;
-let history = ['home'];
-let currentSongTabs = ['اطلاعات','داستان','متن','نت'];
+const D={
+  albums:[
+    {id:"ad01",t:"گلایه‌ها",y:"۱۳۵۷",j:"",s:[{t:"سال دوهزار",p:"اردلان سرفراز",c:"منوچهر چشم‌آذر",r:"منوچهر چشم‌آذر"},{t:"سقوط",p:"شهیار قنبری",c:"فریبرز لاچینی",r:""},{t:"داد از این دل",p:"باباطاهر",c:"پرویز مقصدی",r:""},{t:"گلایه‌ها",p:"اردلان سرفراز",c:"منوچهر چشم‌آذر",r:""}]},
+    {id:"ad02",t:"ای عشق",y:"۱۳۵۷",j:"",s:[{t:"ای عشق",p:"اردلان سرفراز",c:"داوود بهبودی",r:"اریک آرکانت"},{t:"نیستی",p:"فرید زلاند",c:"منوچهر چشم‌آذر",r:""},{t:"نجات",p:"جمشید زندی",c:"داوود اردلان",r:""},{t:"فاجعه",p:"ایرج جنتی عطایی",c:"داریوش",r:""},{t:"دیوار",p:"حسین منزوی",c:"داوود بهبودی",r:"اریک آرکانت"}]},
+    {id:"ad03",t:"داریوش از وطن می‌گوید",y:"۱۳۵۸",j:"",s:[{t:"وطن",p:"ایرج جنتی عطایی",c:"خوزه فیلیسیانو",r:"واروژان"},{t:"مرگ شب",p:"پرویز مقصدی",c:"منوچهر چشم‌آذر",r:""},{t:"صدایم کن",p:"عباس خوشدل",c:"عباس خوشدل",r:""},{t:"سرگردون (اجرای اول)",p:"",c:"منوچهر چشم‌آذر",r:"منوچهر چشم‌آذر"},{t:"مصلوب",p:"اردلان سرفراز",c:"صادق نوجوکی",r:"ناصر چشم‌آذر"}]},
+    {id:"ad04",t:"امروز",y:"۱۳۶۰",j:"",s:[{t:"نامه به وطن",p:"سید اشرف‌الدین حسینی",c:"داریوش",r:"آندرانیک"},{t:"پند حافظ",p:"حافظ",c:"فرید زلاند",r:""},{t:"ولایت",p:"اردلان سرفراز",c:"",r:""},{t:"گره کور",p:"",c:"",r:""},{t:"وطن",p:"ایرج جنتی عطایی",c:"خوزه فیلیسیانو",r:"واروژان"}]},
+    {id:"ad05",t:"انتخابی یک",y:"۱۳۶۱",j:"مشترک با جمعی از هنرمندان",s:[{t:"فدایی وطن",p:"مسعود امینی",c:"کاظم رزازان",r:"کاظم رزازان"}]},
+    {id:"ad06",t:"ندیم (خاطره ۱)",y:"۱۳۶۱",j:"مشترک با هایده",story:"آلبوم مشترک داریوش و هایده.",s:[{t:"ندیم",p:"ایرج رزم‌جو",c:"صادق نوجوکی",r:"ناصر چشم‌آذر"},{t:"روزگار نامهربون",p:"",c:"صادق نوجوکی",r:""},{t:"نشانی از تو می‌بینم",p:"",c:"",r:""}]},
+    {id:"ad07",t:"خاک خوب من",y:"۱۳۶۲",j:"",s:[{t:"بهار خاموش",p:"احمد شاملو",c:"بابک افشار",r:""},{t:"نفرین بر دشمن",p:"بابا طاهر",c:"",r:""},{t:"گذری بر شبانه",p:"احمد شاملو",c:"",r:""},{t:"خسته‌ام",p:"اردلان سرفراز",c:"",r:""},{t:"کارون",p:"کارو دردریان",c:"",r:""},{t:"سلام (خاک خوب من)",p:"عباس مرادی",c:"",r:""}]},
+    {id:"ad08",t:"یا رب",y:"۱۳۶۳",j:"مشترک با هایده و ابی",s:[{t:"تکیه بر باد",p:"لیلا کسری",c:"فرید زلاند",r:"آندرانیک"},{t:"دل من",p:"هما میرافشار",c:"محمد حیدری",r:""}]},
+    {id:"ad09",t:"نازنین",y:"۱۳۶۴",j:"مشترک با ابی، ستار و حمیرا",s:[{t:"نازنین",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"حادثه",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"}]},
+    {id:"ad10",t:"همبستگی",y:"۱۳۶۵",j:"مشترک با جمعی از هنرمندان",s:[{t:"با من از یاران بگو",p:"علی گزرسز / مسعود سپند",c:"داریوش / بیژن قادری",r:"بیژن قادری"},{t:"حیدر بابا",p:"شهریار",c:"داوود بهبودی",r:"داوود بهبودی"}]},
+    {id:"ad11",t:"دلبر",y:"۱۳۶۶",j:"مشترک با ابی و معین",s:[{t:"آینه",p:"اردلان سرفراز",c:"فرید زلاند",r:"آرمن آهارونیان"},{t:"نیایش",p:"اردلان سرفراز",c:"منوچهر چشم‌آذر",r:""}]},
+    {id:"ad12",t:"لالایی",y:"۱۳۶۶",j:"مشترک با هایده، ابی و معین",s:[{t:"گل زیره (لالایی)",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},{t:"شانه‌هایت",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"}]},
+    {id:"ad13",t:"خاموش نمی‌رید",y:"۱۳۶۶",j:"",s:[{t:"خاموش نمی‌رید",p:"مولوی",c:"احمد پژمان",r:"احمد پژمان"},{t:"گرگ بیابون",p:"هما میرافشار",c:"",r:""},{t:"روله",p:"علیرضا شجاعی‌پور",c:"",r:""},{t:"خانه سرخ",p:"ایرج جنتی عطایی",c:"داوود بهبودی",r:""},{t:"با من از ایران بگو",p:"",c:"",r:""},{t:"گفتگو با دل",p:"معینی کرمانشاهی",c:"عماد رام",r:""}]},
+    {id:"ad14",t:"مطرب",y:"۱۳۶۷",j:"مشترک با ستار و ابی",s:[{t:"جنگل جاری",p:"ایرج جنتی عطایی",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"یاس پرپر",p:"هما میرافشار",c:"آندرانیک",r:"آندرانیک"}]},
+    {id:"ad15",t:"خاک خسته",y:"۱۳۶۸",j:"",s:[{t:"خاک خسته",p:"ایرج جنتی عطایی",c:"بابک افشار",r:"زاره کشیشیان"},{t:"در این بن‌بست",p:"احمد شاملو",c:"احمد پژمان",r:""},{t:"نارفیق",p:"هما میرافشار",c:"زاره کشیشیان",r:""},{t:"بمان مادر",p:"نادر نادرپور",c:"احمد پژمان",r:""},{t:"بپاخیزید",p:"شهرام دانش",c:"",r:""}]},
+    {id:"ad16",t:"مرا به خانه‌ام ببر",y:"۱۳۶۹",j:"",s:[{t:"مرا به خانه‌ام ببر",p:"ایرج جنتی عطایی",c:"آرمیک",r:"آرمیک"},{t:"سرگردان (نسخه ۲)",p:"",c:"منوچهر چشم‌آذر",r:""}]},
+    {id:"ad17",t:"مرمر",y:"۱۳۶۹",j:"مشترک با ابی، شهره و فرزین",s:[{t:"همصدا",p:"اردلان سرفراز",c:"فرید زلاند",r:"کاظم عالمی"},{t:"پرنده مهاجر",p:"ایرج جنتی عطایی",c:"صابر راستین",r:"صابر راستین"}]},
+    {id:"ad18",t:"نون و پنیر و سبزی",y:"۱۳۶۹",j:"مشترک با ابی",s:[{t:"سهم من",p:"اردلان سرفراز",c:"فرید زلاند",r:"عبدی یمینی"},{t:"آهای مردم دنیا",p:"اردلان سرفراز",c:"فرید زلاند",r:""},{t:"نون و پنیر و سبزی",p:"شهیار قنبری",c:"منوچهر چشم‌آذر",r:""}]},
+    {id:"ad19",t:"امان از…",y:"۱۳۷۱",j:"",s:[{t:"دو مسافر",p:"شهیار قنبری",c:"عبدی یمینی",r:""},{t:"روز مبادا",p:"",c:"",r:""},{t:"شاید باید",p:"",c:"",r:""},{t:"تمام من",p:"",c:"",r:""},{t:"امان از…",p:"",c:"",r:""}]},
+    {id:"ad20",t:"سفره سین",y:"۱۳۷۲",j:"مشترک با هاتف",s:[{t:"بالای نی",p:"شهیار قنبری",c:"محمد زمانی",r:"عبدی یمینی"},{t:"چی بگم",p:"ناهید کبیری",c:"بابک بیات",r:"آرمن آهارونیان"},{t:"چکامه سفره سین",p:"زویا زاکاریان",c:"داوود اردلان",r:"داوود اردلان"}]},
+    {id:"ad21",t:"بچه‌های ایران",y:"۱۳۷۴",j:"",s:[{t:"به تکرار غم نیما",p:"شهریار دادور",c:"عبدی یمینی",r:"عبدی یمینی"},{t:"به بچه‌هامون چی بگیم",p:"اردلان سرفراز",c:"",r:""},{t:"بچه‌های ایران",p:"هادی خرسندی",c:"همایون خسروی",r:"آرمن آهارونیان"},{t:"با شما آیندگانم",p:"ایرج جنتی عطایی",c:"بابک بیات",r:""},{t:"بغض",p:"شهریار دادور / اکبر آزاد",c:"",r:""},{t:"پرسه",p:"ایرج جنتی عطایی",c:"آندرانیک",r:"آندرانیک"},{t:"حریق دریا",p:"شهیار قنبری",c:"",r:""}]},
+    {id:"ad22",t:"آشفته‌بازار",y:"۱۳۷۵",j:"",s:[{t:"طاقت",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},{t:"آشفته بازار",p:"",c:"",r:""},{t:"شب شکن",p:"ایرج جنتی عطایی",c:"فرید زلاند",r:"فرید زلاند"},{t:"شمالی",p:"مسعود امینی",c:"حسن شماعی‌زاده",r:""},{t:"فصلی دوباره",p:"امیرفرخ تجلی",c:"اسفندیار منفردزاده",r:"اسفندیار منفردزاده"},{t:"بهار",p:"فریدون مشیری",c:"",r:""}]},
+    {id:"ad23",t:"قهرمانان وطن",y:"۱۳۷۷",j:"مشترک با لیلا فروهر و اندی",s:[{t:"قهرمانان وطن",p:"همایون هوشیارنژاد",c:"شوبرت آواکیان",r:"شوبرت آواکیان"},{t:"قهرمانان وطن (رمیکس)",p:"",c:"",r:""}]},
+    {id:"ad24",t:"گل بیتا",y:"۱۳۷۸",j:"",s:[{t:"شام مهتاب",p:"مینا جلالی",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"شیرین شیرین",p:"لیلا کسری",c:"",r:""},{t:"گل بیتا",p:"ایرج جنتی عطایی",c:"",r:""},{t:"هم غصه",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"آندرانیک"},{t:"یاران",p:"تورج نگهبان",c:"توحید عظیمی",r:"رامین زمانی"},{t:"سرود آفرینش",p:"محمد زمانی",c:"",r:"آندرانیک"},{t:"تندباد حادثه",p:"منوچهر طاهرزاده",c:"",r:""},{t:"کهن دیارا",p:"نادر نادرپور",c:"محمد زمانی",r:"رامین زمانی"}]},
+    {id:"ad25",t:"معشوق همین‌جاست: رومی",y:"۱۳۸۱",j:"مشترک با رامش و فرامرز اصلانی",s:[{t:"معشوق همین‌جاست",p:"مولانا",c:"فرزین فرهادی",r:""},{t:"در این عشق بمیرید",p:"مولانا",c:"",r:""},{t:"غلام قمر",p:"مولانا",c:"",r:""},{t:"هو",p:"مولانا",c:"",r:""},{t:"تو نه چنانی که منم",p:"مولانا",c:"",r:""},{t:"وقت آن شد",p:"مولانا",c:"",r:""}]},
+    {id:"ad26",t:"دوباره می‌سازمت وطن",y:"۱۳۸۲",j:"",story:"سرود میهنی. شعر از سیمین بهبهانی.",s:[{t:"دوباره می‌سازمت وطن",p:"سیمین بهبهانی",c:"داریوش",r:"اریک آرکانت"},{t:"حرکت",p:"محمدعلی اصفهانی",c:"محمد شمس",r:"محمد شمس"},{t:"آذرآبادگان",p:"زویا زاکاریان",c:"وطن‌دوست",r:"آرمن آهارونیان"},{t:"ایران نگاه کن",p:"منوچهر نامور آزاد",c:"محمد شمس",r:"محمد شمس"},{t:"افسانه‌ها",p:"تورج نگهبان",c:"کاوه حقیقی",r:"کاوه حقیقی"}]},
+    {id:"ad27",t:"راه من",y:"۱۳۸۳",j:"",s:[{t:"راه من",p:"شهیار قنبری",c:"فرید زلاند",r:"تیگران ساکیان"},{t:"کار من",p:"",c:"",r:""},{t:"چکاوک",p:"ایرج جنتی عطایی",c:"",r:""},{t:"روزنه",p:"",c:"",r:""},{t:"موج",p:"اردلان سرفراز",c:"آندرانیک",r:""},{t:"روز اول",p:"",c:"تیگران ساکیان",r:""},{t:"تلنگر",p:"",c:"",r:""}]},
+    {id:"ad28",t:"معجزه خاموش",y:"۱۳۸۷",j:"",s:[{t:"شطرنج",p:"روزبه بمانی",c:"داریوش",r:"هومن محمدی"},{t:"تقویم",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"ساعت شوم",p:"ایرج جنتی عطایی",c:"بابک سعیدی",r:"بابک سعیدی"},{t:"شب تاب",p:"شهیار قنبری",c:"فرید زلاند",r:"واهان اسکندریان"},{t:"دل تنگم",p:"ایرج جنتی عطایی",c:"بابک سعیدی",r:"بابک سعیدی"},{t:"معجزه خاموش",p:"",c:"",r:""},{t:"هم‌درد",p:"منوچهر نامور آزاد",c:"محمد شمس",r:"تیگران ساکیان"},{t:"تصویر رؤیا",p:"روزبه بمانی",c:"مهدی یراحی",r:"بهروز صفاریان"},{t:"آواز پری‌ها",p:"ایرج جنتی عطایی",c:"فرید زلاند",r:"واهان اسکندریان"},{t:"راهی",p:"اردلان سرفراز",c:"",r:""}]},
+    {id:"ad29",t:"دنیای این روزای من",y:"۱۳۸۹",j:"",s:[{t:"به نام من",p:"روزبه بمانی",c:"علیرضا افکاری",r:""},{t:"سراب رد پای تو",p:"",c:"",r:""},{t:"من از تو",p:"",c:"",r:""},{t:"دنیای این روزای من",p:"",c:"",r:""},{t:"سلول بی‌مرز",p:"",c:"",r:""},{t:"شکنجه‌گر",p:"",c:"",r:""},{t:"قیصر",p:"",c:"",r:""},{t:"اینجا چراغی روشنه",p:"",c:"",r:""}]},
+    {id:"ad30",t:"انسان",y:"۱۳۸۹",j:"مشترک با فتانه اقبالی",s:[{t:"انسان",p:"رحیم معینی کرمانشاهی",c:"هومن محمدی",r:"هومن محمدی"},{t:"آسمون",p:"هما میرافشار",c:"اسدالله ملک",r:""},{t:"آوای خسته دلان",p:"تورج نگهبان",c:"همایون خرم",r:""},{t:"سلام به پیری",p:"رحیم معینی کرمانشاهی",c:"فضل‌الله توکل",r:""},{t:"پایان عشق",p:"عماد رام",c:"",r:""},{t:"بی‌همگان",p:"مولانا",c:"عبدالله دوامی",r:""},{t:"سوار خواهد آمد",p:"سیمین بهبهانی",c:"هومن محمدی",r:""},{t:"مِی‌زده",p:"بیژن ترقی",c:"پرویز یاحقی",r:""},{t:"خواب نوشین",p:"رحیم معینی کرمانشاهی",c:"پرویز یاحقی",r:""}]},
+    {id:"ad31",t:"معشوق همین‌جاست ۲: حافظ",y:"۱۳۹۱",j:"",s:[{t:"مژده ای دل",p:"حافظ",c:"فرزین فرهادی",r:""},{t:"دغل می‌کنند",p:"حافظ",c:"",r:""},{t:"این چنین نخواهد ماند",p:"حافظ",c:"",r:""},{t:"دیو",p:"حافظ",c:"",r:""},{t:"عالم جوان",p:"حافظ",c:"",r:""},{t:"آرامگه یار کجاست",p:"حافظ",c:"",r:""},{t:"جام جمشید",p:"حافظ",c:"",r:""},{t:"خاک مهربانان",p:"حافظ",c:"",r:""},{t:"حجاب چهره جان",p:"حافظ",c:"",r:""},{t:"غم مخور",p:"حافظ",c:"",r:""},{t:"ای صبا، ای صبا",p:"حافظ",c:"",r:""},{t:"حکایت",p:"حافظ",c:"",r:""}]},
+    {id:"ad32",t:"صفر",y:"۱۳۹۵",j:"",s:[{t:"صفر",p:"اردلان سرفراز",c:"فرید زلاند",r:"فرید زلاند"},{t:"متوقف",p:"",c:"",r:""},{t:"نیاز (ورژن دوم)",p:"",c:"",r:""},{t:"شب آخر (ورژن دوم)",p:"",c:"",r:""},{t:"همزاد",p:"",c:"",r:""},{t:"نترسون",p:"ایرج جنتی عطایی",c:"تیگران ساکیان",r:""},{t:"دوباره باز خواهم گشت",p:"اردلان سرفراز",c:"علی الهی",r:""},{t:"رسیدن (بی‌کلام)",p:"",c:"فرید زلاند",r:""}]},
+    {id:"ad33",t:"گرگ",y:"۱۴۰۰",j:"",s:[{t:"معلم تاریخ ما",p:"اردلان سرفراز",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"گرگ",p:"فریدون مشیری",c:"داریوش اقبالی",r:"علی الهی"},{t:"دروغ",p:"فرزاد فتاحی",c:"فرزاد فتاحی",r:"فرزاد فتاحی"},{t:"نفس ایران",p:"رحیم معینی کرمانشاهی",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"این بار",p:"مینا جلالی",c:"",r:""},{t:"به من فکر کن",p:"مریم دلشاد",c:"کیوان رجبی",r:"علی مهراسبی"},{t:"سرود زندگانی",p:"فریدون مشیری",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"زندگی یعنی همین",p:"حمید ناصحی",c:"همایون آرام‌فر",r:"بهروز صفاریان"},{t:"بوف کور",p:"فرهاد عزیزی",c:"فرزاد فتاحی",r:"فرزاد فتاحی"},{t:"درد گنگ",p:"هوشنگ ابتهاج",c:"داریوش تقی‌پور",r:"داریوش تقی‌پور"},{t:"لبخند",p:"اردلان سرفراز",c:"",r:""},{t:"دیار آشتی",p:"فریدون مشیری",c:"",r:""}]}
+  ],
+  compilations:[
+    {id:"dc01",t:"نازنین (گردآوری)",y:"۱۳۶۹",j:"",s:[{t:"مرا به خانه‌ام ببر",p:"ایرج جنتی عطایی",c:"آرمیک",r:"آرمیک"},{t:"نازنین",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"آینه",p:"اردلان سرفراز",c:"فرید زلاند",r:"آرمن آهارونیان"},{t:"حادثه",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},{t:"گل زیره",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},{t:"نیایش",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"سرگردان (اجرای دوم)",p:"ایرج جنتی عطایی",c:"منوچهر چشم‌آذر",r:"آرمیک"},{t:"جنگل جاری",p:"ایرج جنتی عطایی",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"یاس پرپر",p:"هما میرافشار",c:"آندرانیک",r:"آندرانیک"},{t:"فدایی وطن",p:"مسعود امینی",c:"کاظم رزازان",r:"کاظم رزازان"}]}
+  ],
+  concerts:[
+    {id:"dcon1",t:"صحنه ۱",y:"۱۳۷۰",j:"",s:[{t:"بمان مادر",p:"نادر نادرپور",c:"بابک افشار",r:"عبدی یمینی"},{t:"رهگذار عُمر",p:"تورج نگهبان",c:"بابک افشار",r:"عبدی یمینی"},{t:"سقوط، بوی گندم، اجازه",p:"شهیار قنبری، رضا عطایی",c:"فریبرز لاچینی، واروژان",r:"عبدی یمینی"},{t:"خونه",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"عبدی یمینی"},{t:"مرا به خانه‌ام ببر",p:"ایرج جنتی عطایی",c:"آرمیک",r:"عبدی یمینی"},{t:"شقایق",p:"اردلان سرفراز",c:"فرید زلاند",r:"عبدی یمینی"},{t:"پریا",p:"احمد شاملو",c:"داریوش اقبالی",r:"عبدی یمینی"},{t:"آهای مردم دنیا",p:"اردلان سرفراز",c:"فرید زلاند",r:"عبدی یمینی"},{t:"نازنین",p:"اردلان سرفراز",c:"فرید زلاند",r:"عبدی یمینی"},{t:"زندونی",p:"محمدعلی شیرازی",c:"انوشیروان روحانی",r:"عبدی یمینی"}]},
+    {id:"dcon2",t:"صحنه ۲",y:"۱۳۷۴",j:"",s:[{t:"گلایه",p:"اردلان سرفراز",c:"منوچهر چشم‌آذر",r:"عبدی یمینی"},{t:"یاور همیشه مؤمن",p:"ایرج جنتی عطایی",c:"فرید زلاند",r:"عبدی یمینی"},{t:"بن‌بست، جنگل، پنجره",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"عبدی یمینی"},{t:"دستای تو",p:"اردلان سرفراز",c:"حسن شماعی‌زاده",r:"عبدی یمینی"},{t:"مسبب",p:"رحیم معینی کرمانشاهی",c:"عماد رام",r:"عبدی یمینی"},{t:"دل من",p:"ایرج رزم‌جو",c:"محمد حیدری",r:"عبدی یمینی"},{t:"وطن",p:"ایرج جنتی عطایی",c:"خوزه فیلیسیانو",r:"عبدی یمینی"}]},
+    {id:"dcon3",t:"صحنه ۳",y:"۱۳۸۱",j:"",s:[{t:"فریاد زیر آب",p:"ایرج جنتی عطایی",c:"بابک بیات",r:""},{t:"وطن",p:"ایرج جنتی عطایی",c:"خوزه فیلیسیانو",r:""},{t:"زندونی",p:"محمدعلی شیرازی",c:"انوشیروان روحانی",r:""},{t:"شقایق",p:"اردلان سرفراز",c:"فرید زلاند",r:""},{t:"مرا به خانه‌ام ببر",p:"ایرج جنتی عطایی",c:"آرمیک",r:""},{t:"اجازه",p:"رضا عطایی",c:"واروژان",r:""},{t:"آهای مردم دنیا",p:"اردلان سرفراز",c:"فرید زلاند",r:""},{t:"چشم من",p:"اردلان سرفراز",c:"حسن شماعی‌زاده",r:""}]}
+  ],
+  films:[
+    {t:"دستای تو",film:"دشنه",dir:"فریدون گله",p:"اردلان سرفراز",c:"حسن شماعی‌زاده",r:"حسن شماعی‌زاده",y:"۱۳۵۱"},
+    {t:"زندونی",film:"گذر اکبر",dir:"محمدعلی زرندی",p:"محمدعلی شیرازی",c:"انوشیروان روحانی",r:"انوشیروان روحانی",y:"۱۳۵۱"},
+    {t:"شهر غم",film:"شیر تو شیر",dir:"منصور پورمند",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"بابک بیات",y:"۱۳۵۱"},
+    {t:"جنگل",film:"خورشید در مرداب",dir:"محمد صفار",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"بابک بیات",y:"۱۳۵۲"},
+    {t:"پنجره",film:"علی کنکوری",dir:"مسعود اسداللهی",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"بابک بیات",y:"۱۳۵۲"},
+    {t:"برادرجان",film:"علف‌های هرز",dir:"فرزان دلجو",p:"ایرج جنتی عطایی",c:"واروژان",r:"واروژان",y:"۱۳۵۵"},
+    {t:"عشق من عاشقم باش",film:"علف‌های هرز",dir:"فرزان دلجو",p:"ایرج جنتی عطایی",c:"واروژان",r:"واروژان",y:"۱۳۵۵"},
+    {t:"فریاد زیر آب",film:"فریاد زیر آب",dir:"سیروس الوند",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"بابک بیات",y:"۱۳۵۶"},
+    {t:"اجازه",film:"فریاد زیر آب",dir:"سیروس الوند",p:"رضا عطایی",c:"واروژان",r:"واروژان",y:"۱۳۵۶"}
+  ],
+  singles:[
+    {t:"پیمان شکسته",p:"علی گزرسز",c:"داریوش",r:"پرویز مقصدی",y:"۱۳۴۹",n:"اولین ترانه رسمی"},
+    {t:"به من نگو دوستت دارم",p:"مصطفی جاویدان",c:"پرویز مقصدی",r:"پرویز مقصدی",y:"۱۳۵۰"},
+    {t:"دستای تو",p:"اردلان سرفراز",c:"حسن شماعی‌زاده",r:"حسن شماعی‌زاده",y:"۱۳۵۱"},
+    {t:"چشم من",p:"اردلان سرفراز",c:"حسن شماعی‌زاده",r:"حسن شماعی‌زاده",y:"۱۳۵۲"},
+    {t:"بوی خوب گندم",p:"شهیار قنبری",c:"واروژان",r:"واروژان",y:"۱۳۵۳",n:"باعث دستگیری داریوش، شهیار و واروژان شد"},
+    {t:"شقایق",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک",y:"۱۳۵۵"},
+    {t:"جنگل",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"بابک بیات",y:"۱۳۵۲",n:"با الهام از رویداد سیاهکل"},
+    {t:"بن‌بست",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"بابک بیات",y:"۱۳۵۳"},
+    {t:"خونه",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"محمد اوشال",y:"۱۳۵۲"},
+    {t:"فریاد زیر آب",p:"ایرج جنتی عطایی",c:"بابک بیات",r:"بابک بیات",y:"۱۳۵۶"},
+    {t:"برادر جان",p:"ایرج جنتی عطایی",c:"واروژان",r:"واروژان",y:"۱۳۵۵"},
+    {t:"اجازه",p:"رضا عطایی",c:"واروژان",r:"واروژان",y:"۱۳۵۶"},
+    {t:"یاور همیشه مؤمن",p:"ایرج جنتی عطایی",c:"فرید زلاند",r:"واروژان",y:"۱۳۵۵"},
+    {t:"جشن دلتنگی",p:"ایرج جنتی عطایی",c:"آندرانیک",r:"آندرانیک",y:"۱۳۵۶"},
+    {t:"پریا",p:"احمد شاملو",c:"داریوش",r:"پرویز مقصدی",y:"۱۳۵۱"},
+    {t:"مرا به خانه‌ام ببر",p:"ایرج جنتی عطایی",c:"آرمیک",r:"آرمیک",y:"۱۳۶۹"},
+    {t:"دوباره می‌سازمت وطن",p:"سیمین بهبهانی",c:"داریوش",r:"اریک آرکانت",y:"۱۳۸۲"},
+    {t:"شب آخر",p:"اردلان سرفراز",c:"فرید زلاند",r:"علی الهی",y:"۱۳۹۴"},
+    {t:"به سمت فردای جهان",p:"ایرج جنتی عطایی",c:"معین شیرپور",r:"معین شیرپور",y:"۱۴۰۱",n:"زن زندگی آزادی"},
+    {t:"برخیز",p:"اردلان سرفراز",c:"امیر جباریان",r:"امیر جباریان",y:"۱۴۰۱",n:"زن زندگی آزادی"}
+  ]
+};
 
-function val(v) { return v ? `<span class="info-val">${v}</span>` : `<span class="info-val empty">—</span>`; }
+const H={
+  albums:[
+    {id:"ha01",t:"آرگامان ۴۹",y:"۱۳۴۹",j:"مشترک با مهستی",s:[{t:"دیدار",p:"",c:"",r:""},{t:"ای خدا",p:"",c:"",r:""},{t:"کلام عاشقانه",p:"",c:"",r:""},{t:"شیرین جان",p:"",c:"",r:""},{t:"حیف",p:"",c:"",r:""}]},
+    {id:"ha02",t:"ترانه‌هایی از مهستی هایده ایرج",y:"۱۳۵۲",j:"مشترک با مهستی و ایرج",s:[{t:"زمونه",p:"پرویز وکیلی",c:"علی تجویدی",r:""},{t:"بگو چه کنم",p:"",c:"",r:""},{t:"با تو هستم هر کجا هستم",p:"اسماعیل نواب صفا",c:"",r:""}]},
+    {id:"ha03",t:"هایده - نسرین",y:"۱۳۵۴",j:"مشترک با نسرین",s:[{t:"زمونه",p:"اردلان سرفراز",c:"بابک افشار",r:""},{t:"دلم میخواد",p:"هما میرافشار",c:"محمد حیدری",r:""},{t:"عزیزترین",p:"",c:"",r:""},{t:"دعای سحر",p:"",c:"",r:""},{t:"مستی",p:"",c:"",r:""},{t:"برای تو می‌میرم",p:"",c:"",r:""}]},
+    {id:"ha04",t:"آونگ ۱۵۵",y:"۱۳۵۵",j:"مشترک با مهستی و حمیرا",s:[{t:"نمی‌خوام",p:"عطاءالله خرم",c:"مجتبی میرزاده",r:""},{t:"بزن تار",p:"منصور تهرانی",c:"صادق نوجوکی",r:"ناصر چشم‌آذر"},{t:"با تو هستم",p:"اسماعیل نواب صفا",c:"علی تجویدی",r:""},{t:"تنها با گلها",p:"علیرضا طبایی",c:"حسن لشکری",r:""}]},
+    {id:"ha05",t:"هایده-مهستی-حمیرا ۲",y:"۱۳۵۶",j:"مشترک با مهستی و حمیرا",s:[{t:"کتاب هستی",p:"هما میرافشار",c:"انوشیروان روحانی",r:""},{t:"گل سنگ",p:"بیژن سمندر",c:"انوشیروان روحانی",r:""},{t:"فدات بگردم",p:"بیژن سمندر",c:"",r:""},{t:"زندگی قشنگه",p:"امان منطقی",c:"",r:""},{t:"مهمان",p:"هما میرافشار",c:"انوشیروان روحانی",r:""},{t:"مینای دل",p:"",c:"",r:""}]},
+    {id:"ha06",t:"خاطره (ندیم)",y:"۱۳۶۱",j:"مشترک با داریوش",story:"آلبوم مشترک هایده و داریوش.",s:[{t:"عالم یک‌رنگی",p:"بیژن سمندر",c:"صادق نوجوکی",r:""},{t:"عروسک",p:"ایرج رزمجو",c:"صادق نوجوکی",r:""},{t:"گل‌واژه",p:"منصور تهرانی",c:"صادق نوجوکی",r:""}]},
+    {id:"ha07",t:"راز دل",y:"۱۳۶۲",j:"مشترک با ستار",s:[{t:"روزای روشن",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},{t:"پادشه خوبان",p:"حافظ",c:"فرید زلاند",r:""},{t:"راز دل",p:"عبدالله شادان",c:"جلیل زلاند",r:"سیمون آوانسیان"}]},
+    {id:"ha08",t:"یکی را دوست می‌دارم",y:"۱۳۶۲",j:"مشترک با مهستی و هوشمند عقیلی",s:[{t:"یکی را دوست می‌دارم",p:"مسعود امینی",c:"معین",r:"کاظم رزازان"}]},
+    {id:"ha09",t:"عاشقانه",y:"۱۳۶۲",j:"مشترک با مهستی",s:[{t:"بهار بهار",p:"محمد حیدری",c:"محمد حیدری",r:"منوچهر چشم‌آذر"},{t:"زهر جدایی",p:"محمد حیدری",c:"محمد حیدری",r:""},{t:"به جز خدا کسی نیست",p:"محمد حیدری",c:"محمد حیدری",r:""}]},
+    {id:"ha10",t:"خاطره ۲",y:"۱۳۶۲",j:"مشترک با مهستی و حمیرا",s:[{t:"راوی",p:"ایرج رزمجو",c:"صادق نوجوکی",r:""},{t:"لجبازی زمونه",p:"",c:"",r:""}]},
+    {id:"ha11",t:"عید من و تو",y:"۱۳۶۲",j:"مشترک با مهستی",s:[{t:"کی میدونه",p:"مسعود امینی",c:"حسن شماعی‌زاده",r:""},{t:"مستی‌ام",p:"اردلان سرفراز",c:"فریدون خشنود",r:""}]},
+    {id:"ha12",t:"یا رب",y:"۱۳۶۳",j:"مشترک با داریوش و ابی",s:[{t:"یا رب",p:"لیلا کسری (هدیه)",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"تو که نیستی",p:"لیلا کسری (هدیه)",c:"آندرانیک",r:""}]},
+    {id:"ha13",t:"هم‌خونه",y:"۱۳۶۳",j:"مشترک با ویگن",s:[{t:"وای به حالش",p:"لیلا کسری (هدیه)",c:"فرید زلاند",r:"آندرانیک"},{t:"اسیر تو",p:"لیلا کسری (هدیه)",c:"آندرانیک",r:""},{t:"هم‌خونه (با ویگن)",p:"اردلان سرفراز",c:"",r:""}]},
+    {id:"ha14",t:"ترانه‌های شصت و سه (نرگس شیراز)",y:"۱۳۶۳",j:"مشترک با ستار و مهستی",s:[{t:"نرگس شیراز",p:"لیلا کسری (هدیه)",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"قصهٔ من",p:"لیلا کسری (هدیه)",c:"آندرانیک",r:""}]},
+    {id:"ha15",t:"بهترین",y:"۱۳۶۳",j:"مشترک با ستار و هوشمند عقیلی",s:[{t:"نامه",p:"لیلا کسری (هدیه)",c:"سعید دیهیمی",r:"احمد پژمان"},{t:"سراب قلبم",p:"",c:"فرید زلاند",r:"آندرانیک"},{t:"تو نگاه کن",p:"علیرضا طبایی",c:"حسن لشکری",r:""},{t:"گل‌های سرخ",p:"پرویز وکیلی",c:"علی تجویدی",r:""}]},
+    {id:"ha16",t:"خاطره ۳ (اشاره)",y:"۱۳۶۳",j:"مشترک با حمیرا، ستار و صادق نوجوکی",s:[{t:"اشاره",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:""},{t:"ای دل",p:"",c:"",r:""},{t:"آشیونه",p:"",c:"",r:""}]},
+    {id:"ha17",t:"خاطره ۴ (شب عشق)",y:"۱۳۶۳",j:"مشترک با مهستی، ستار، ابی و صادق نوجوکی",s:[{t:"شب عشق (با ابی)",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:""},{t:"شب عید (با ابی)",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:""},{t:"تاریخ عشق",p:"",c:"صادق نوجوکی",r:""}]},
+    {id:"ha18",t:"زندگی",y:"۱۳۶۴",j:"مشترک با مهستی",s:[{t:"زندگی",p:"بیژن سمندر",c:"صادق نوجوکی",r:""},{t:"کی میدونه",p:"مسعود امینی",c:"حسن شماعی‌زاده",r:""}]},
+    {id:"ha19",t:"آهنگ‌های انوشیروان روحانی",y:"۱۳۶۴",j:"",s:[{t:"آواز تنهایی",p:"طبیب اصفهانی",c:"انوشیروان روحانی",r:""},{t:"کاشکی دوست نداشتم",p:"امان منطقی، آذر صراف‌پور",c:"انوشیروان روحانی",r:""},{t:"ترانه سال",p:"بیژن سمندر",c:"انوشیروان روحانی",r:""}]},
+    {id:"ha20",t:"ترانه سال",y:"۱۳۶۴",j:"مشترک با مهستی و معین",s:[{t:"ترانه سال",p:"بیژن سمندر",c:"انوشیروان روحانی",r:""},{t:"کاشکی دوست نداشتم",p:"امان منطقی، آذر صراف‌پور",c:"انوشیروان روحانی",r:""},{t:"سراب",p:"مهین عمید",c:"انوشیروان روحانی",r:""},{t:"ای یار من",p:"مولوی",c:"انوشیروان روحانی",r:""}]},
+    {id:"ha21",t:"خاطره ۵ (باده فروش)",y:"۱۳۶۴",j:"مشترک با مهستی، هوشمند عقیلی و صادق نوجوکی",s:[{t:"باده فروش",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:""},{t:"ای خدا",p:"",c:"",r:""}]},
+    {id:"ha22",t:"خونه به خونه",y:"۱۳۶۵",j:"مشترک با ابی، حسن شماعی‌زاده و دیگران",s:[{t:"خونه به خونه",p:"همایون هوشیارنژاد",c:"حسن شماعی‌زاده",r:"نوید نحوی"}]},
+    {id:"ha23",t:"لالایی",y:"۱۳۶۵",j:"مشترک با داریوش، ابی و معین",s:[{t:"شانه‌هایت",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"بهانه",p:"اردلان سرفراز",c:"",r:""}]},
+    {id:"ha24",t:"گلهای غربت ۱",y:"۱۳۶۶",j:"مشترک با معین",s:[{t:"زمونه",p:"",c:"محمد حیدری",r:""}]},
+    {id:"ha25",t:"گلریز",y:"۱۳۶۶",j:"مشترک با مهستی، ستار و سوزان روشن",s:[{t:"گلریز",p:"هما میرافشار",c:"بابک افشار",r:""},{t:"هم‌نفس",p:"",c:"",r:""}]},
+    {id:"ha26",t:"گنجینه ۱",y:"۱۳۶۶",j:"مشترک با معین، ستار و مهستی",s:[{t:"شهر آشوب",p:"جهانبخش پازوکی",c:"منوچهر چشم‌آذر",r:""},{t:"آینه",p:"لقمان ادهمی",c:"",r:""}]},
+    {id:"ha27",t:"ساغر هستی",y:"۱۳۶۶",j:"مشترک با مهستی، معین و بهرام فروهر",s:[{t:"ساغر هستی",p:"هما میرافشار",c:"جمشید شیبانی",r:"شهداد روحانی"},{t:"وفای دل",p:"لیلا کسری (هدیه)",c:"بهروز پناهی",r:""}]},
+    {id:"ha28",t:"گلباران ۳ (بانو)",y:"۱۳۶۶",j:"مشترک با مهستی، ابی، معین و دیگران",s:[{t:"آشتی",p:"هما میرافشار",c:"آندرانیک",r:""}]},
+    {id:"ha29",t:"خاطره ۶ (سفره)",y:"۱۳۶۶",j:"مشترک با معین و صادق نوجوکی",s:[{t:"سیاه چشمون",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:""},{t:"شوریده سر",p:"بیژن سمندر",c:"صادق نوجوکی",r:""}]},
+    {id:"ha30",t:"پرستوها",y:"۱۳۶۷",j:"مشترک با مهستی و ستار",s:[{t:"سر به هوا",p:"جهانبخش پازوکی",c:"منوچهر چشم‌آذر",r:""},{t:"ساقی",p:"اردلان سرفراز",c:"فرید زلاند",r:""}]},
+    {id:"ha31",t:"ای زندگی سلام",y:"۱۳۶۷",j:"",s:[{t:"دستای تو",p:"لیلا کسری (هدیه)",c:"آندرانیک",r:"آندرانیک"},{t:"ای زندگی سلام",p:"لیلا کسری (هدیه)",c:"حسن شماعی‌زاده",r:""},{t:"جادو",p:"",c:"آندرانیک",r:""},{t:"شب میخونه",p:"لیلا کسری (هدیه)",c:"فرهنگ شریف",r:"محمد حیدری"}]},
+    {id:"ha32",t:"ترانه سال",y:"۱۳۶۸",j:"مشترک با مهستی و معین",s:[{t:"ترانه سال",p:"بیژن سمندر",c:"انوشیروان روحانی",r:"انوشیروان روحانی"},{t:"کاشکی دوست نداشتم",p:"امان منطقی",c:"انوشیروان روحانی",r:""},{t:"سراب",p:"مهین عمید",c:"انوشیروان روحانی",r:""},{t:"ای یار من",p:"مولانا",c:"انوشیروان روحانی",r:""}]},
+    {id:"ha33",t:"شب عاشقان",y:"۱۳۶۹",j:"مشترک با ستار",s:[{t:"منم آنکه برای تو می‌میرم",p:"تورج نگهبان",c:"محمد حیدری",r:""},{t:"کی رفته‌ای ز دل (آواز دشتی)",p:"فروغی بسطامی",c:"",r:""},{t:"حیف",p:"هما میرافشار",c:"",r:""},{t:"رفتم",p:"اسماعیل نواب صفا",c:"",r:""}]},
+    {id:"ha34",t:"هزار و یک شب",y:"۱۳۷۲",j:"مشترک با ابی، داریوش و معین",s:[{t:"شانه‌هایت",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"بهانه",p:"",c:"",r:""}]},
+    {id:"ha35",t:"مهمان",y:"۱۳۷۵",j:"مشترک با مهستی",s:[{t:"مهمان بهار",p:"هما میرافشار",c:"انوشیروان روحانی",r:""},{t:"سکوت خواب",p:"",c:"",r:""},{t:"دلم میخواد",p:"هما میرافشار",c:"محمد حیدری",r:""},{t:"خداحافظ",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:""},{t:"حرف تازه",p:"مسعود امینی",c:"انوشیروان روحانی",r:""},{t:"سراب",p:"مهین عمید",c:"",r:""},{t:"گل سنگ",p:"بیژن سمندر",c:"انوشیروان روحانی",r:""},{t:"اشک و آه",p:"رحیم معینی کرمانشاهی",c:"همایون خرم",r:""}]},
+    {id:"ha36",t:"اوج صدا",y:"۱۳۷۶",j:"مشترک با مهستی",s:[{t:"مینای دل",p:"هما میرافشار",c:"انوشیروان روحانی",r:""},{t:"فدات بگردم",p:"بیژن سمندر",c:"",r:""},{t:"حرف تازه",p:"مسعود امینی",c:"انوشیروان روحانی",r:""},{t:"سراب",p:"مهین عمید",c:"",r:""},{t:"کتاب هستی",p:"هما میرافشار",c:"",r:""},{t:"فریاد",p:"کریم فکور",c:"انوشیروان روحانی",r:""}]},
+    {id:"ha37",t:"اون دیار",y:"۱۳۸۱",j:"مشترک با عهدیه، حمیرا و دیگران",s:[{t:"روزای روشن",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"}]}
+  ],
+  compilations:[
+    {id:"hc01",t:"گل‌واژه",y:"۱۳۷۰",j:"",s:[{t:"عاشقترین",p:"امیر کعبه‌ای",c:"حسین واثقی",r:"کاظم عالمی"},{t:"یه روز (بدرود)",p:"امیر کعبه‌ای",c:"حسین واثقی",r:"کاظم عالمی"},{t:"گل‌واژه",p:"منصور تهرانی",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"به جز خدا کسی نیست",p:"محمد حیدری",c:"محمد حیدری",r:"محمد حیدری"},{t:"سر به هوا",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"منوچهر چشم‌آذر"},{t:"گل کاغذی",p:"بیژن سمندر",c:"ناصر چشم‌آذر",r:"ناصر چشم‌آذر"},{t:"سایه عشق",p:"لیلا کسری",c:"لقمان ادهمی",r:"لقمان ادهمی"},{t:"زهر جدایی",p:"محمد حیدری",c:"محمد حیدری",r:"محمد حیدری"}]},
+    {id:"hc02",t:"یکی را دوست می‌دارم (گردآوری)",y:"۱۳۶۹",j:"",s:[{t:"یکی را دوست می‌دارم",p:"مسعود امینی",c:"معین",r:"کاظم رزازان"},{t:"به جز خدا کسی نیست",p:"محمد حیدری",c:"محمد حیدری",r:"محمد حیدری"},{t:"زهر جدایی",p:"محمد حیدری",c:"محمد حیدری",r:"محمد حیدری"},{t:"گل واژه",p:"منصور تهرانی",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"عروسک",p:"ایرج رزمجو",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"افسانه هستی",p:"هما میرافشار",c:"آندرانیک",r:"آندرانیک"},{t:"گل کاغذی",p:"بیژن سمندر",c:"ناصر چشم‌آذر",r:"ناصر چشم‌آذر"}]},
+    {id:"hc03",t:"شب عشق (آهنگ‌های صادق نوجوکی)",y:"۱۳۶۹",j:"",s:[{t:"سیاه چشمون",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"شب عشق (با ابی)",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"شوریده سر",p:"بیژن سمندر",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"تاریخ عشق",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"دل دیوونه",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"آشیونه",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"اشاره",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"شب عید (با ابی)",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"باده فروش",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"ای خدا",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی"}]},
+    {id:"hc04",t:"بزن تار (گردآوری)",y:"",j:"",s:[{t:"نگو نمیام",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"منوچهر چشم‌آذر"},{t:"بهونه",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},{t:"افسانه هستی",p:"هما میر افشار",c:"آندرانیک",r:"آندرانیک"},{t:"بزن تار",p:"منصور تهرانی",c:"صادق نوجوکی",r:"ناصر چشم آذر"},{t:"عروسک",p:"ایرج رزمجو",c:"صادق نوجوکی",r:"صادق نوجوکی"},{t:"وفای دل",p:"هما میر افشار",c:"جمشید شیبانی",r:"بهروز پناهی"},{t:"ساقی",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},{t:"عسل چشم",p:"بیژن سمندر",c:"ناصر چشم‌آذر",r:"ناصر چشم‌آذر"},{t:"نمی‌خوام",p:"عطاالله خرم",c:"مهری شاه حسینی",r:"مجتبی میرزاده"}]},
+    {id:"hc05",t:"روزای روشن (گردآوری)",y:"۱۳۷۱",j:"",s:[{t:"روزای روشن",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},{t:"همخونه",p:"اردلان سرفراز",c:"آندرانیک",r:"آندرانیک"},{t:"آشتی",p:"هما میر افشار",c:"آندرانیک",r:"آندرانیک"},{t:"قصه من",p:"لیلا کسری (هدیه)",c:"فرید زلاند",r:"آندرانیک"},{t:"تو که نیستی",p:"لیلا کسری (هدیه)",c:"فرید زلاند",r:"آندرانیک"},{t:"بهانه",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"}]},
+    {id:"hc06",t:"آزاده (گردآوری)",y:"۱۳۷۵",j:"",s:[{t:"آزاده",p:"رهی معیری",c:"علی تجویدی",r:"علی تجویدی",n:"دستگاه سه‌گاه"},{t:"فریاد از این جدایی",p:"رهی معیری",c:"علی تجویدی",r:"علی تجویدی",n:"دستگاه شور"}]},
+    {id:"hc07",t:"آشنایی",y:"۱۳۷۰",j:"",s:[{t:"مستی",p:"اردلان سرفراز",c:"فریدون خشنود",r:"فریدون خشنود"},{t:"آشنایی",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"مجتبی میرزاده"},{t:"مثل گذشته‌ها نیست",p:"مینا اسدی",c:"محمد حیدری",r:""},{t:"برای تو می‌میرم",p:"تورج نگهبان",c:"محمد حیدری",r:"محمد حیدری"},{t:"حیف حیف",p:"هما میرافشار",c:"محمد حیدری",r:"مجتبی میرزاده"},{t:"عطر عود",p:"هما میرافشار",c:"محمد حیدری",r:"مجتبی میرزاده"},{t:"قلب من",p:"هما میرافشار",c:"محمد حیدری",r:"مجتبی میرزاده"},{t:"اومدنت محاله",p:"هما میرافشار",c:"سیاوش زندگانی",r:"مجتبی میرزاده"}]}
+  ],
+  concerts:[
+    {id:"hcon1",t:"شب عاشقان (کنسرت)",y:"",j:"مشترک با ستار",s:[{t:"منم آن که برای تو می‌میرم",p:"",c:"",r:""},{t:"کی رفته‌ای ز دل",p:"فروغی بسطامی",c:"",r:""},{t:"رفتم",p:"نواب صفا",c:"علی تجویدی",r:"علی تجویدی"}]},
+    {id:"hcon2",t:"بزم نوروز",y:"۱۳۶۴",j:"",s:[{t:"ناوک مژگان",p:"علی اکبر شیدا",c:"علی اکبر شیدا",r:""},{t:"آواز (گر از این منزل ویران)",p:"حافظ",c:"",r:""}]}
+  ],
+  films:[
+    {t:"سلسله مو",film:"دالاهو",dir:"",p:"جعفر پورهاشمی",c:"جعفر پورهاشمی",r:"",y:"پاییز ۱۳۴۶"},
+    {t:"تنها با گل‌ها",film:"تنها و گل‌ها",dir:"",p:"علیرضا طبائی",c:"حسن لشکری",r:"واروژان",y:"بهمن ۱۳۵۲"},
+    {t:"تو چشمون سیاهم",film:"تنها و گل‌ها",dir:"",p:"علیرضا طبائی",c:"حسن لشکری",r:"واروژان",y:"بهمن ۱۳۵۲"},
+    {t:"هوای خاک",film:"فرار از بهشت",dir:"",p:"فرخ شریعت‌زاده",c:"فریدون خشنود",r:"فریدون خشنود",y:"بهمن ۱۳۵۳"},
+    {t:"قشنگه",film:"شبگرد",dir:"",p:"امان منطقی",c:"انوشیروان روحانی",r:"انوشیروان روحانی",y:"فروردین ۱۳۵۴"},
+    {t:"ای خدا",film:"رانده شده",dir:"",p:"محمدعلی شیرازی",c:"همایون خرم",r:"همایون خرم",y:"مرداد ۱۳۵۴"},
+    {t:"میهمان",film:"میهمان",dir:"",p:"هما میرافشار",c:"انوشیروان روحانی",r:"انوشیروان روحانی",y:"آبان ۱۳۵۵"}
+  ],
+  singles:[
+    {t:"آزاده",p:"رهی معیری",c:"علی تجویدی",r:"علی تجویدی",y:"۱۳۴۷",n:"اولین ترانه رسمی هایده"},
+    {t:"یکی را دوست می‌دارم",p:"مسعود امینی",c:"معین",r:"کاظم رزازان",y:"۱۳۶۲"},
+    {t:"بهار بهار",p:"محمد حیدری",c:"محمد حیدری",r:"منوچهر چشم‌آذر",y:"۱۳۶۲"},
+    {t:"شانه‌هایت",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر",y:""},
+    {t:"روزای روشن",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک",y:""},
+    {t:"سوغاتی",p:"اردلان سرفراز",c:"محمد حیدری",r:"ناصر چشم‌آذر",y:"",n:"رتبه ۱ بیست آهنگ برتر هایده"},
+    {t:"مستی",p:"اردلان سرفراز",c:"فریدون خشنود",r:"فریدون خشنود",y:""},
+    {t:"وای به حالش",p:"لیلا کسری (هدیه)",c:"فرید زلاند",r:"آندرانیک",y:""},
+    {t:"نگو نمیام",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"منوچهر چشم‌آذر",y:""},
+    {t:"راوی",p:"ایرج رزمجو",c:"صادق نوجوکی",r:"صادق نوجوکی",y:""},
+    {t:"پادشه خوبان",p:"حافظ",c:"فرید زلاند",r:"آندرانیک",y:""},
+    {t:"خداحافظ",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"مجتبی میرزاده",y:""},
+    {t:"تو که نیستی",p:"لیلا کسری (هدیه)",c:"فرید زلاند",r:"آندرانیک",y:""},
+    {t:"دل دیوونه",p:"لیلا کسری (هدیه)",c:"صادق نوجوکی",r:"صادق نوجوکی",y:""},
+    {t:"سفره عشق",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"مجتبی میرزاده",y:""},
+    {t:"ای زندگی سلام",p:"لیلا کسری (هدیه)",c:"حسن شماعی‌زاده",r:"آندرانیک",y:"۱۳۶۷"},
+    {t:"بزن تار",p:"منصور تهرانی",c:"صادق نوجوکی",r:"ناصر چشم‌آذر",y:""}
+  ],
+  top20:[
+    {rank:1,t:"سوغاتی",p:"اردلان سرفراز",c:"محمد حیدری",r:"ناصر چشم‌آذر"},
+    {rank:2,t:"شانه‌هایت",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},
+    {rank:3,t:"روزای روشن",p:"اردلان سرفراز",c:"فرید زلاند",r:"آندرانیک"},
+    {rank:4,t:"بزن تار",p:"منصور تهرانی",c:"صادق نوجوکی",r:"ناصر چشم‌آذر"},
+    {rank:5,t:"ساقی",p:"اردلان سرفراز",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},
+    {rank:6,t:"شب عشق",p:"لیلا کسری",c:"صادق نوجوکی",r:"صادق نوجوکی"},
+    {rank:7,t:"مستی",p:"اردلان سرفراز",c:"فریدون خشنود",r:"فریدون خشنود"},
+    {rank:8,t:"وای به حالش",p:"لیلا کسری",c:"فرید زلاند",r:"آندرانیک"},
+    {rank:9,t:"گل سنگ",p:"بیژن سمندر",c:"انوشیروان روحانی",r:"شهرداد روحانی"},
+    {rank:10,t:"نگو نمیام",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"منوچهر چشم‌آذر"},
+    {rank:11,t:"راوی",p:"ایرج رزمجو",c:"صادق نوجوکی",r:"صادق نوجوکی"},
+    {rank:12,t:"بهار بهار",p:"محمد حیدری",c:"محمد حیدری",r:"منوچهر چشم‌آذر"},
+    {rank:13,t:"پادشه خوبان",p:"حافظ",c:"فرید زلاند",r:"آندرانیک"},
+    {rank:14,t:"ای زندگی سلام",p:"لیلا کسری",c:"حسن شماعی‌زاده",r:"آندرانیک"},
+    {rank:15,t:"خداحافظ",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"مجتبی میرزاده"},
+    {rank:16,t:"یا رب",p:"لیلا کسری",c:"فرید زلاند",r:"منوچهر چشم‌آذر"},
+    {rank:17,t:"زندگی",p:"بیژن سمندر",c:"صادق نوجوکی",r:"صادق نوجوکی"},
+    {rank:18,t:"تو که نیستی",p:"لیلا کسری",c:"فرید زلاند",r:"آندرانیک"},
+    {rank:19,t:"دل دیوونه",p:"لیلا کسری",c:"صادق نوجوکی",r:"صادق نوجوکی"},
+    {rank:20,t:"سفره عشق",p:"جهانبخش پازوکی",c:"جهانبخش پازوکی",r:"مجتبی میرزاده"}
+  ]
+};
 
-function openArtist(id) {
-  currentArtist = DATA[id];
-  const a = currentArtist;
-  const c = a.colorLight;
-  const cd = a.colorDark;
+// STATE
+let cur={artist:null,album:null,song:null};
+let stk=['home'];
 
-  document.getElementById('artist-hero').innerHTML = `
-    <div style="font-size:11px;letter-spacing:2px;color:${c};text-transform:uppercase;margin-bottom:6px;font-weight:600">${a.title}</div>
-    <div class="artist-hero-name">${a.name}</div>
-    <div class="artist-hero-sub">${a.fullName} · متولد ${a.born}${a.died ? ' · درگذشته '+a.died : ''}</div>
-    <div class="artist-bio">${a.bio}</div>
-    <div class="artist-tags">
-      <span class="tag" style="color:${c};border-color:${a.color}">${a.voiceType}</span>
-      <span class="tag" style="color:${c};border-color:${a.color}">${a.birthPlace}</span>
-      ${a.died ? `<span class="tag" style="color:var(--muted);border-color:var(--border)">درگذشته</span>` : ''}
-    </div>
-  `;
+function v(x){return x||'<span class="iempty">—</span>';}
+function getData(id){return id==='dariush'?D:H;}
 
-  // color tabs
-  document.querySelectorAll('.sec-tab').forEach(t => t.style.borderBottomColor = '');
-  document.getElementById('tab-albums').style.setProperty('--tab-active', c);
-
-  // Albums
-  let albHTML = '<div class="list-section">';
-  a.albums.forEach((alb,i) => {
-    const hasMeta = alb.composer || alb.poet;
-    albHTML += `<div class="item-row" onclick="openAlbum('${alb.id}')">
-      <div class="item-num" style="background:${cd};color:${c}">${i+1}</div>
-      <div class="item-info">
-        <div class="item-title">${alb.title}</div>
-        <div class="item-sub">${alb.year}${hasMeta ? ' · '+[alb.poet,alb.composer].filter(Boolean).join(' · ') : ''}</div>
+// HOME
+function renderHome(){
+  document.getElementById('al').innerHTML=Object.values(A).map(a=>{
+    const data=getData(a.id);
+    const albs=(data.albums||[]).length+(data.compilations||[]).length+(data.concerts||[]).length;
+    const sngs=(data.singles||[]).length;
+    return `<div class="ac" style="background:linear-gradient(135deg,${a.d} 0%,${a.c}88 100%);border:1px solid ${a.c}55" onclick="openArtist('${a.id}')">
+      <div class="ac-deco" style="background:${a.l}"></div>
+      <div class="ac-label">خواننده · ${a.voice}</div>
+      <div class="ac-name" style="color:${a.l}">${a.name}</div>
+      <div class="ac-sub">${a.title} — ${a.full}</div>
+      <div class="ac-stats">
+        <div class="ac-stat"><span style="color:${a.l}">${albs}</span><p>آلبوم</p></div>
+        <div class="ac-stat"><span style="color:${a.l}">${sngs}</span><p>تک‌آهنگ</p></div>
+        ${a.died?`<div class="ac-stat"><span style="color:${a.l}">${a.born.slice(-4)}</span><p>تولد</p></div>`:`<div class="ac-stat"><span style="color:${a.l}">۱۳۴۹</span><p>آغاز فعالیت</p></div>`}
       </div>
-      <div class="item-arrow">›</div>
     </div>`;
-  });
-  albHTML += '</div>';
-  document.getElementById('panel-albums').innerHTML = albHTML;
-
-  // Singles
-  let sinHTML = '<div class="list-section">';
-  a.singles.forEach((s,i) => {
-    const hasMeta = s.composer || s.poet;
-    sinHTML += `<div class="item-row" onclick="openSong('${s.id}', null)">
-      <div class="item-num" style="background:${cd};color:${c}">${i+1}</div>
-      <div class="item-info">
-        <div class="item-title">${s.title}</div>
-        <div class="item-sub">${s.year}${hasMeta ? ' · '+[s.poet,s.composer].filter(Boolean).join(' · ') : ''}</div>
-      </div>
-      <div class="item-arrow">›</div>
-    </div>`;
-  });
-  sinHTML += '</div>';
-  document.getElementById('panel-singles').innerHTML = sinHTML;
-
-  switchSection('albums');
-  navigate('artist', a.name);
+  }).join('');
 }
 
-function openAlbum(albumId) {
-  const a = currentArtist;
-  const alb = a.albums.find(x => x.id === albumId);
-  const c = a.colorLight, cd = a.colorDark;
-
-  document.getElementById('album-hero').innerHTML = `
-    <div style="font-size:11px;color:${c};font-weight:600;letter-spacing:1px;margin-bottom:4px">آلبوم</div>
-    <div class="album-title">${alb.title}</div>
-    <div class="album-year">${alb.year}</div>
-    ${alb.poet ? `<div class="album-info-row"><span class="album-info-label">شاعر</span><span class="album-info-val">${alb.poet}</span></div>` : ''}
-    ${alb.composer ? `<div class="album-info-row"><span class="album-info-label">آهنگساز</span><span class="album-info-val">${alb.composer}</span></div>` : ''}
-    ${alb.arranger ? `<div class="album-info-row"><span class="album-info-label">تنظیم‌کننده</span><span class="album-info-val">${alb.arranger}</span></div>` : ''}
-    ${alb.director ? `<div class="album-info-row"><span class="album-info-label">کارگردان</span><span class="album-info-val">${alb.director}</span></div>` : ''}
-    ${alb.story ? `<div class="album-story">${alb.story}</div>` : ''}
-  `;
-
-  let songsHTML = '';
-  alb.songs.forEach((s,i) => {
-    songsHTML += `<div class="item-row" onclick="openSong('${s.id}', '${albumId}')">
-      <div class="item-num" style="background:${cd};color:${c}">${i+1}</div>
-      <div class="item-info">
-        <div class="item-title">${s.title}</div>
-        <div class="item-sub">${s.year}${s.poet ? ' · '+s.poet : ''}</div>
-      </div>
-      <div class="item-arrow">›</div>
-    </div>`;
-  });
-  document.getElementById('album-songs').innerHTML = songsHTML;
-
-  navigate('album', alb.title);
-}
-
-function openSong(songId, albumId) {
-  const a = currentArtist;
-  const c = a.colorLight, cd = a.colorDark;
-  let song = null;
-
-  if (albumId) {
-    const alb = a.albums.find(x => x.id === albumId);
-    song = alb.songs.find(x => x.id === songId);
-  } else {
-    song = a.singles.find(x => x.id === songId);
+// ARTIST
+function openArtist(id){
+  cur.artist=A[id];
+  const a=cur.artist;
+  const data=getData(id);
+  document.getElementById('ah').innerHTML=`
+    <div class="ah-tag" style="color:${a.l}">${a.title}</div>
+    <div class="ah-name">${a.name}</div>
+    <div class="ah-sub">${a.full} · متولد ${a.born}${a.died?' · درگذشته '+a.died:''}</div>
+    <div class="ah-bio">${a.bio}</div>`;
+  const secs=a.secs;
+  document.getElementById('stabs').innerHTML=secs.map((s,i)=>`<button class="stab${i===0?' active':''}" onclick="switchSec(${i})" id="stab${i}" style="${i===0?'border-bottom-color:'+a.l+';color:'+a.l:''}">${s}</button>`).join('');
+  document.getElementById('spanels').innerHTML=secs.map((_,i)=>`<div class="spanel${i===0?' active':''}" id="sp${i}"></div>`).join('');
+  // fill panels
+  if(id==='dariush'){
+    fillList('sp0',data.albums,a,'alb');
+    fillList('sp1',data.compilations,a,'alb');
+    fillList('sp2',data.concerts,a,'alb');
+    fillFilms('sp3',data.films,a);
+    fillSingles('sp4',data.singles,a);
+  }else{
+    fillList('sp0',data.albums,a,'alb');
+    fillList('sp1',data.compilations,a,'alb');
+    fillList('sp2',data.concerts,a,'alb');
+    fillFilms('sp3',data.films,a);
+    fillSingles('sp4',data.singles,a);
+    fillTop20('sp5',data.top20,a);
   }
-  if (!song) return;
+  nav('artist',a.name);
+}
 
-  document.getElementById('song-hero').innerHTML = `
-    <div style="font-size:11px;color:${c};font-weight:600;letter-spacing:1px;margin-bottom:4px">${a.name}</div>
-    <div class="song-hero-title">${song.title}</div>
-    <div class="song-hero-artist">${song.year}</div>
-    <div class="song-nav-tabs">
-      <button class="song-tab active" onclick="switchSongTab(0,this)" style="background:${c};border-color:${c};color:#000">اطلاعات</button>
-      <button class="song-tab" onclick="switchSongTab(1,this)">داستان</button>
-      <button class="song-tab" onclick="switchSongTab(2,this)">متن ترانه</button>
-      <button class="song-tab" onclick="switchSongTab(3,this)">نت</button>
+function fillList(pid,items,a,type){
+  const el=document.getElementById(pid);
+  if(!items||!items.length){el.innerHTML='<div class="nodata"><div class="nodata-ic">📂</div>موردی ثبت نشده</div>';return;}
+  el.innerHTML=`<div class="lbl">(${items.length})</div>`+items.map((item,i)=>`
+    <div class="row" onclick="openAlbum('${item.id}')">
+      <div class="rnum" style="background:${a.d};color:${a.l}">${i+1}</div>
+      <div class="rinfo">
+        <div class="rtitle">${item.t}</div>
+        <div class="rsub">${[item.y,item.j].filter(Boolean).join(' · ')||'—'}</div>
+      </div>
+      <div class="rarr">›</div>
+    </div>`).join('');
+}
+
+function fillFilms(pid,items,a){
+  const el=document.getElementById(pid);
+  if(!items||!items.length){el.innerHTML='<div class="nodata"><div class="nodata-ic">🎬</div>موردی ثبت نشده</div>';return;}
+  el.innerHTML=`<div class="lbl">(${items.length})</div>`+items.map((s,i)=>`
+    <div class="row" onclick='openSongObj(${JSON.stringify({...s,isFilm:true}).replace(/'/g,"&#39;")})'>
+      <div class="rnum" style="background:${a.d};color:${a.l}">${i+1}</div>
+      <div class="rinfo">
+        <div class="rtitle">${s.t}</div>
+        <div class="rsub">فیلم: ${s.film} · ${s.y||''}</div>
+      </div>
+      <div class="rarr">›</div>
+    </div>`).join('');
+}
+
+function fillSingles(pid,items,a){
+  const el=document.getElementById(pid);
+  if(!items||!items.length){el.innerHTML='<div class="nodata"><div class="nodata-ic">🎵</div>موردی ثبت نشده</div>';return;}
+  el.innerHTML=`<div class="lbl">(${items.length})</div>`+items.map((s,i)=>`
+    <div class="row" onclick='openSongObj(${JSON.stringify(s).replace(/'/g,"&#39;")})'>
+      <div class="rnum" style="background:${a.d};color:${a.l}">${i+1}</div>
+      <div class="rinfo">
+        <div class="rtitle">${s.t}</div>
+        <div class="rsub">${s.y||''}${s.p?' · '+s.p:''}</div>
+        ${s.n?`<div class="nbadge">${s.n}</div>`:''}
+      </div>
+      <div class="rarr">›</div>
+    </div>`).join('');
+}
+
+function fillTop20(pid,items,a){
+  const el=document.getElementById(pid);
+  if(!items||!items.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="lbl">نظرسنجی شبکه من‌وتو</div>`+items.map(s=>`
+    <div class="t20row">
+      <div class="t20rank ${s.rank===1?'gold':s.rank===2?'silver':s.rank===3?'bronze':''}">${s.rank}</div>
+      <div class="rinfo">
+        <div class="rtitle">${s.t}</div>
+        <div class="rsub">${[s.p,s.c].filter(Boolean).join(' · ')}</div>
+      </div>
+    </div>`).join('');
+}
+
+function switchSec(i){
+  const a=cur.artist;
+  document.querySelectorAll('.stab').forEach((t,j)=>{t.classList.toggle('active',j===i);t.style.borderBottomColor=j===i?a.l:'transparent';t.style.color=j===i?a.l:'';});
+  document.querySelectorAll('.spanel').forEach((p,j)=>p.classList.toggle('active',j===i));
+}
+
+// ALBUM
+function openAlbum(id){
+  const data=getData(cur.artist.id);
+  const all=[...(data.albums||[]),...(data.compilations||[]),...(data.concerts||[])];
+  const alb=all.find(x=>x.id===id);
+  if(!alb)return;
+  cur.album=alb;
+  const a=cur.artist;
+  document.getElementById('albh').innerHTML=`
+    <div class="alb-tag" style="color:${a.l}">آلبوم · ${a.name}</div>
+    <div class="alb-title">${alb.t}</div>
+    <div class="alb-year">${alb.y||''}${alb.j?' · '+alb.j:''}</div>
+    ${alb.story?`<div class="alb-story">${alb.story}</div>`:''}`;
+  document.getElementById('albsongs').innerHTML=(alb.s||[]).map((s,i)=>`
+    <div class="row" onclick="openSong('${id}',${i})">
+      <div class="rnum" style="background:${a.d};color:${a.l}">${i+1}</div>
+      <div class="rinfo">
+        <div class="rtitle">${s.t}</div>
+        <div class="rsub">${[s.y,s.p].filter(Boolean).join(' · ')||'—'}</div>
+        ${s.n?`<div class="nbadge">${s.n}</div>`:''}
+      </div>
+      <div class="rarr">›</div>
+    </div>`).join('')||'<div class="nodata"><div class="nodata-ic">🎵</div>ترانه‌ای ثبت نشده</div>';
+  nav('album',alb.t);
+}
+
+// SONG
+function openSong(albId,idx){
+  const data=getData(cur.artist.id);
+  const all=[...(data.albums||[]),...(data.compilations||[]),...(data.concerts||[])];
+  const alb=all.find(x=>x.id===albId);
+  if(!alb)return;
+  renderSong(alb.s[idx]);
+}
+
+function openSongObj(s){renderSong(s);}
+
+function renderSong(s){
+  cur.song=s;
+  const a=cur.artist;
+  document.getElementById('sngh').innerHTML=`
+    <div class="sng-tag" style="color:${a.l}">${a.name}</div>
+    <div class="sng-title">${s.t}</div>
+    <div class="sng-year">${s.y||''}</div>
+    <div class="stabs2">
+      <button class="stab2 active" onclick="swtab(0,this)" style="background:${a.l};border-color:${a.l}">اطلاعات</button>
+      <button class="stab2" onclick="swtab(1,this)">داستان</button>
+      <button class="stab2" onclick="swtab(2,this)">متن ترانه</button>
+      <button class="stab2" onclick="swtab(3,this)">نت</button>
+    </div>`;
+  document.getElementById('sngpanels').innerHTML=`
+    <div class="spanel2 active" id="s0">
+      <div class="irow"><span class="ilbl">خواننده</span><span class="ival">${a.full}</span></div>
+      <div class="irow"><span class="ilbl">سال</span>${v(s.y)}</div>
+      <div class="irow"><span class="ilbl">شاعر / ترانه‌سرا</span>${v(s.p)}</div>
+      <div class="irow"><span class="ilbl">آهنگساز</span>${v(s.c)}</div>
+      <div class="irow"><span class="ilbl">تنظیم‌کننده</span>${v(s.r)}</div>
+      ${s.film?`<div class="irow"><span class="ilbl">نام فیلم</span><span class="ival">${s.film}</span></div>`:''}
+      ${s.dir?`<div class="irow"><span class="ilbl">کارگردان</span><span class="ival">${s.dir}</span></div>`:''}
+      ${s.n?`<div class="irow"><span class="ilbl">توضیح</span><span class="ival">${s.n}</span></div>`:''}
     </div>
-  `;
-
-  // Info panel
-  document.getElementById('sp-info').innerHTML = `
-    <div class="info-grid">
-      <div class="info-row"><span class="info-label">خواننده</span>${val(a.fullName)}</div>
-      <div class="info-row"><span class="info-label">سال</span>${val(song.year)}</div>
-      <div class="info-row"><span class="info-label">شاعر / ترانه‌سرا</span>${val(song.poet)}</div>
-      <div class="info-row"><span class="info-label">آهنگساز</span>${val(song.composer)}</div>
-      <div class="info-row"><span class="info-label">تنظیم‌کننده</span>${val(song.arranger)}</div>
-      <div class="info-row"><span class="info-label">کارگردان</span>${val(song.director)}</div>
-    </div>
-  `;
-
-  // Story panel
-  document.getElementById('sp-story').innerHTML = song.story
-    ? `<p class="story-text">${song.story}</p>`
-    : `<div class="no-content"><div class="no-content-icon">📖</div>داستانی برای این ترانه ثبت نشده</div>`;
-
-  // Lyrics panel
-  document.getElementById('sp-lyrics').innerHTML = song.lyrics
-    ? `<pre class="lyrics-text">${song.lyrics}</pre>`
-    : `<div class="no-content"><div class="no-content-icon">🎵</div>متن ترانه هنوز اضافه نشده</div>`;
-
-  // Sheet music
-  document.getElementById('sp-sheet').innerHTML = `
-    <div class="no-content"><div class="no-content-icon">🎼</div>نت این ترانه هنوز اضافه نشده</div>
-  `;
-
-  // reset tabs
-  document.querySelectorAll('.song-tab').forEach(t => {
-    t.classList.remove('active');
-    t.style.background = '';
-    t.style.borderColor = '';
-    t.style.color = '';
-  });
-  const firstTab = document.querySelector('.song-tab');
-  if (firstTab) {
-    firstTab.classList.add('active');
-    firstTab.style.background = c;
-    firstTab.style.borderColor = c;
-    firstTab.style.color = '#000';
-  }
-  ['sp-info','sp-story','sp-lyrics','sp-sheet'].forEach((id,i) => {
-    document.getElementById(id).classList.toggle('active', i===0);
-  });
-
-  navigate('song', song.title);
+    <div class="spanel2" id="s1">${s.story?`<p class="story">${s.story}</p>`:'<div class="nodata"><div class="nodata-ic">📖</div>داستانی ثبت نشده</div>'}</div>
+    <div class="spanel2" id="s2">${s.lyrics?`<pre class="lyrics">${s.lyrics}</pre>`:'<div class="nodata"><div class="nodata-ic">🎵</div>متن هنوز اضافه نشده</div>'}</div>
+    <div class="spanel2" id="s3"><div class="nodata"><div class="nodata-ic">🎼</div>نت هنوز اضافه نشده</div></div>`;
+  nav('song',s.t);
 }
 
-function switchSongTab(idx, btn) {
-  const a = currentArtist;
-  const c = a ? a.colorLight : '#c9a0ff';
-  document.querySelectorAll('.song-tab').forEach(t => {
-    t.classList.remove('active');
-    t.style.background = '';
-    t.style.borderColor = '';
-    t.style.color = '';
-  });
-  btn.classList.add('active');
-  btn.style.background = c;
-  btn.style.borderColor = c;
-  btn.style.color = '#000';
-  ['sp-info','sp-story','sp-lyrics','sp-sheet'].forEach((id,i) => {
-    document.getElementById(id).classList.toggle('active', i===idx);
-  });
+function swtab(i,btn){
+  const a=cur.artist;
+  document.querySelectorAll('.stab2').forEach(t=>{t.classList.remove('active');t.style.background='';t.style.borderColor='';t.style.color='';});
+  btn.classList.add('active');btn.style.background=a.l;btn.style.borderColor=a.l;btn.style.color='#000';
+  [0,1,2,3].forEach(j=>{const p=document.getElementById('s'+j);if(p)p.classList.toggle('active',j===i);});
 }
 
-function switchSection(section) {
-  ['albums','singles'].forEach(s => {
-    document.getElementById('tab-'+s).classList.toggle('active', s===section);
-    document.getElementById('panel-'+s).classList.toggle('active', s===section);
-  });
-  const c = currentArtist ? currentArtist.colorLight : '#fff';
-  document.getElementById('tab-'+section).style.borderBottomColor = c;
-  document.getElementById('tab-'+section === 'tab-albums' ? 'tab-singles' : 'tab-albums').style.borderBottomColor = 'transparent';
-}
-
-function navigate(page, title) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const target = document.getElementById('page-'+page);
-  target.classList.add('active');
-  target.classList.remove('fade-in');
-  void target.offsetWidth;
-  target.classList.add('fade-in');
-  document.getElementById('navTitle').textContent = title || 'موسیقی جاودان';
-  document.getElementById('navBack').classList.add('visible');
-  history.push(page);
+// NAV
+function nav(page,title){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active','fade');
+  document.getElementById('nt').textContent=title;
+  document.getElementById('nb').classList.add('show');
+  stk.push(page);
   window.scrollTo(0,0);
 }
 
-function goBack() {
-  history.pop();
-  const prev = history[history.length-1];
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+function goBack(){
+  stk.pop();
+  const prev=stk[stk.length-1];
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+prev).classList.add('active');
-  if (prev === 'home') {
-    document.getElementById('navTitle').textContent = 'موسیقی جاودان';
-    document.getElementById('navBack').classList.remove('visible');
-  } else if (prev === 'artist') {
-    document.getElementById('navTitle').textContent = currentArtist ? currentArtist.name : '';
-  } else if (prev === 'album') {
-    document.getElementById('navTitle').textContent = 'آلبوم';
-  }
+  if(prev==='home'){document.getElementById('nt').textContent='موسیقی جاودان';document.getElementById('nb').classList.remove('show');}
+  else if(prev==='artist')document.getElementById('nt').textContent=cur.artist?.name||'';
+  else if(prev==='album')document.getElementById('nt').textContent=cur.album?.t||'';
   window.scrollTo(0,0);
 }
 
-// Init stats
-document.getElementById('stat-d-alb').textContent = DATA.dariush.albums.length;
-document.getElementById('stat-d-s').textContent = DATA.dariush.singles.length;
-document.getElementById('stat-h-alb').textContent = DATA.hayedeh.albums.length;
-document.getElementById('stat-h-s').textContent = DATA.hayedeh.singles.length;
-
-// PWA service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+renderHome();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
